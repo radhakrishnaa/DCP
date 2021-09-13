@@ -1,0 +1,47 @@
+<!doctype html>
+<html ng-app="cfgPortalWrap">
+  <head>
+    <title>DCP: GDI Device Configuration Portal</title>
+    <link rel="stylesheet" href="static/ui/css/main.css" type="text/css">
+
+    <script type="text/javascript" src="static/ui/js/ng/angular.js"></script>
+    <script type="text/javascript" src="static/ui/js/ng/angular-resource.js"></script>
+
+    <script type="text/javascript" src="static/ui/js/ng/angular-mocks.js"></script>
+
+    <script type="text/javascript" src="static/ui/js/util.js"></script>
+    <script type="text/javascript" src="static/ui/js/schema.js"></script>
+    <script type="text/javascript" src="static/ui/js/main.js"></script>
+
+    <script type="text/javascript" src="static/ui/js/mock.js"></script>
+  </head>
+  <body>
+
+    <div class="header">
+      <div class="logo">
+        <div class="sitename"><span class="env">&nbsp;Local Mock-Data&nbsp;</span> Device Configuration Portal</div>
+        <div class="nav">
+          <span class="ng-cloak" ng-show="currUser.username">
+            <span class="loginname">Logged in as {{currUser.username}}</span> |
+          </span>
+          <a href="/accounts/logout">Logout</a> |
+          <a href="#/">Home</a>
+        </div>
+      </div>
+    </div>
+
+    <!--[if lte IE 8]>
+      <div class="topwarn">WARNING: This site does not support Internet Explorer.</div>
+    <![endif]-->
+    <!--[if gt IE 8]>
+      <div class="topwarn">WARNING: This site has not been tested with Internet Explorer.</div>
+    <![endif]-->
+
+    <div id="working" class="status working hide"><div>... working ...</div></div>
+    <div class="status error ng-cloak" ng-show="shortError"><div>{{shortError}}. <a onclick="location.reload()">[reload]</a></div></div>
+
+    <div class="main" ng-view></div>
+
+  </body>
+</html>
+

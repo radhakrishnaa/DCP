@@ -1,0 +1,81 @@
+
+<div ng-show="error">
+  <h1 id="title-error">Error: <span class="detail">{{errorTitle}}</span>
+    <span class="head_links">
+      <a href="#/">Back to Home</a>
+    </span>
+  </h1>
+  <div id="description-error" class="desc">{{errorDetail}}</div>
+</div>
+
+<div ng-hide="error">
+  <h1 id="list-title"> {{tableDef.dispName}} List
+    <span class="head_links">
+      <a class="link_home" href="#/">&lt; Home</a>
+      <a class="link_new" href="#/{{table}}/new" ng-show="currUser.admin">New</a>
+    </span>
+  </h1>
+
+  <div ng-show="state!='loading'">
+    <div class="pagination">
+      <span>
+        <a ng-class="{disable_url:offset&lt;1}" ng-click="updateOffset(offset-max)">Previous</a>
+        <span ng-show="pageNumbers.length" ng-repeat="pageNumber in pageNumbers">
+          <span class="page_gap" ng-show="$index > 0 && pageNumber != pageNumbers[$index-1] + 1">..</span>
+          <a ng-class="{curr_page:isCurrentPage({{pageNumber}})}" ng-click="updateOffset((pageNumber-1)*max)">{{pageNumber}}</a>
+        </span>
+        <a ng-class="{disable_url:offset+max&gt;count}" ng-click="updateOffset(offset+max)">Next</a>
+      </span>
+      <span class="per_page">
+        Items per page<select ng-model="maxSelected" ng-options="max for max in maxOptions" ng-change="updateMax()">
+          <option value={{$scope.count}}>{{$scope.count}}</option>
+        </select>
+      </span>
+    </div>
+
+    <form ng-submit="applyFilter()">
+    <table class="list clicklist">
+      <thead>
+        <tr class="hdr_names">
+          <td>&nbsp;</td>
+          <td ng-repeat="field in tableDef.fieldList" ng-show="field.showFor('view','list')">{{field.disp}}</td>
+        </tr>
+        <tr class="hdr_filters">
+          <td></td>
+          <td ng-repeat="field in tableDef.fieldList" ng-show="field.showFor('view','list')">
+              <input id="{{field.name}}" type="text" class="col_filter" ng-model="colFilters[field.name]" ng-show="filterKey(field.name)"/>
+          </td>
+          <td class="filter_apply actions">
+              <input class="cancel" type="submit" name="filter" value="Filter" onclick="this.blur()"/>
+              <input class="cancel" type="button" name="clear" value="X" ng-click="clearFilter()"/>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="item in items">
+          <td class="cell_link">
+            <div><a href="#/{{table}}/view/{{item.id}}" onclick="setTmpItem({{item}})">&gt;</a>&nbsp;</div>
+          </td>
+          <td ng-repeat="field in tableDef.fieldList" ng-show="field.showFor('view','list')" ng-mousedown="clickStart($event)" ng-click="handleAsLink( $event, '/'+table+'/view/'+item.id )" onclick="setTmpItem({{item}})">
+            <span ng-switch on="item[field.name]==null"
+              ><span ng-switch-when="true" class='nullval'>(none)</span
+              ><span ng-switch-default><span ng-repeat="part in splitVal(item._dispVals[field.name])">{{part}}<wbr/></span></span
+            ></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </form>
+    <div ng-show="items.length==0" class="no_entries">no entries found</div>
+  </div>
+
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+</div>
+
+
+

@@ -1,0 +1,159 @@
+
+<div class="error_page" ng-show="error">
+  <h1>Error: <span class="detail">{{errorTitle}}</span>
+    <span class="head_links" ng-switch on="error">
+      <a href="#/{{table}}/list" ng-switch-when="id">&lt; Go to List</a><a href="#/" ng-switch-default>Back to Home</a>
+    </span>
+  </h1>
+  <div class="desc">{{errorDetail}}</div>
+</div>
+
+<div ng-show="!error" ng-class="{submitted:submitted}">
+
+  <h1>{{verb}}: <span class="detail">Version {{ver(vars.verId).version_number}} of {{itemName}}</span></h1>
+
+  <form ng-show="state!='loading'" ng-submit="applyAction()">
+
+    <div class="testscope option_area" ng-show="mode=='testpublish'">
+      <div class="instruct">To publish for testing, specify either a non-production environment, a test HW type, or both. The test HW type is required unless you have "publisher" permissions. To use a test HW type, modify the setting in your phone to match the HW type you specify here.</div>
+      <div class="testcloud option_line"><input type="checkbox" ng-model="testcloud_enabled"
+        ><span class="label">Test Cloud:</span
+          ><select name="cloud" ng-model="testcloud" ng-change="testcloud_enabled=true"
+            ng-options="cloud.short_name as cloud.short_name for cloud in cloud_list">
+          </select
+        >
+      </div>
+      <div class="testhw option_line"><input type="checkbox" ng-model="testhw_enabled"
+        ><span class="label">Test HW Type:</span
+        ><span class="hwname">{{item.hwtype}}_<input type="text" ng-model="testhw"
+          ng-change="testhw_enabled=true"/>_TEST</span>
+      </div>
+    </div>
+
+    <span class="comment">Comment: </span><span class="comment_edit"><input type="text" ng-model="cfgData.comment"></input></span>
+
+    <div class="fields">
+      <table>
+        <tbody ng-repeat="setDef in settingDefs" data-name="{{formatAsName(setDef.name)}}">
+          <tr class="fieldgrp" ng-show="setDef.group != settingDefs[$index-1].group">
+              <td colspan="3">
+                  <div>
+                      <div>{{setDef.group}}</div>
+                  </div>
+              </td>
+          </tr>
+          <tr>
+            <td class="label">{{setDef.display_name}}</td>
+            <td>
+                <div class="valdisp">
+                    <span class="val">{{getSettingVal(setDef.name)}}</span>
+                    <span ng-show="blankRegex.test(getSettingVal(setDef.name)||'')">&nbsp;</span>
+                </div>
+            </td>
+            <td class="tag" ng-switch on="settingLevel(setDef.name)">
+              <span ng-switch-when="1">from {{getSettingSrc(setDef.name)}}</span>
+              <span ng-switch-when="2" class="specific">{{getSettingSrc(setDef.name)}} specific</span>
+              <span ng-switch-when="-1">(no value)</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pgate_opts option_area" ng-show="mode=='propagate'">
+      <div class="instruct">The selected actions will be performed for the current version as well as versions that directly or indirectly inherit from it where possible.</div>
+
+      <div class="pgate_commit option_line"><input type="checkbox" ng-model="commit_enabled"
+        ><span class="label">Commit</span>
+      </div>
+      <div class="pgate_approve option_line"><input type="checkbox" ng-model="approve_enabled"
+        ><span class="label">Approve</span>
+      </div>
+      <div class="pgate_cloud option_line" ng-repeat="cloud in cloud_list"><input type="checkbox" ng-model="cloud_choices[cloud.short_name]"
+        ><span class="label">Publish to {{cloud.short_name}}</span>
+      </div>
+      <div class="pgate_cloud option_line" ng-show="showLevels">
+      Level: <select ng-model="level" ng-options="level as level for level in levels" ></select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <span>
+        <input name="apply" type="submit" value="{{verb}}" onclick="this.blur(); setSubmitted(this,1)"/>
+        <a class="cancel" href="#/{{table}}/view/{{item.id}}" onclick="this.blur(); setTmpItem({{item}})">Cancel</a>
+      </span>
+    </div>
+
+    <div class="bottomnote" ng-show="mode=='testpublish'">NOTE: Publishing for testing does not mark the config version as published.</div>
+
+  </form>
+
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div class="pgate_result" ng-show="mode=='propagate' && result">
+    <h2>Update Issues</h2>
+    <table class="list">
+      <thead>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Config Set</td>
+          <td>Version</td>
+          <td>Problem</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="error in result.errors">
+          <td class="cell_link">
+            <div><a target="_blank" href="#/{{getCfgTable(error.item)}}/view/{{error.item.id}}" onclick="setTmpItem({{error.item}})">&gt;</a>&nbsp;</div>
+          </td>
+          <td>{{tableDefs.config_set.itemName(error.item, true)}}</td>
+          <td>{{error.item.version_number}}</td>
+          <td>{{error.data}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-show="result.errors.length==0" class="no_entries">no issues found</div>
+
+    <br/>
+    <h2>Updates Performed</h2>
+    <table class="list">
+      <thead>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Config Set</td>
+          <td>Version</td>
+          <td>Commited</td>
+          <td>Approved</td>
+          <td>Published to</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="update in result.updates">
+          <td class="cell_link">
+            <div><a target="_blank" href="#/{{getCfgTable(update.item)}}/view/{{update.item.id}}" onclick="setTmpItem({{update.item}})">&gt;</a>&nbsp;</div>
+          </td>
+          <td>{{tableDefs.config_set.itemName(update.item, true)}}</td>
+          <td>{{update.item.version_number}}</td>
+          <td>{{choose(update.data.commit,'X','')}}</td>
+          <td>{{choose(update.data.approve,'X','')}}</td>
+          <td>{{update.data.publish.join(', ')}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-show="result.updates.length==0" class="no_entries">no updates performed</div>
+
+    <div class="actions">
+      <span>
+        <a class="cancel" href="#/{{table}}/view/{{item.id}}" onclick="this.blur(); setTmpItem({{item}})">Close</a>
+      </span>
+    </div>
+  </div>
+
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+
+</div>
+

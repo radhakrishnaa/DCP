@@ -1,0 +1,8 @@
+/dcp/logs/
+/dcp/settings_local.py
+/dist/
+/build/
+*.swp
+*.hide
+/publish_out/cfg*
+

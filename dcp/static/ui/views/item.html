@@ -1,0 +1,132 @@
+
+<div class="error_page" ng-show="error">
+  <h1>Error: <span class="detail">{{errorTitle}}</span>
+    <span class="head_links" ng-switch on="error">
+      <a href="#/{{table}}/list" ng-switch-when="id">&lt; Go to List</a>
+      <a href="#/" ng-switch-default>Back to Home</a>
+    </span>
+  </h1>
+  <div class="desc">{{errorDetail}}</div>
+</div>
+
+<!-- If no error, then show the main page after the item is ready. -->
+<div ng-show="!error" ng-class="{submitted:submitted}">
+  <h1>
+    <a class="back" href="#/{{table}}/list" ng-show="mode=='view'" title="back to {{tableDef.dispName}} List"><span>&lt;</span></a>
+    <span ng-show="titleAction">{{titleAction}}</span>
+    {{getTitlePrefix()}}<span ng-show="id && mode!='new'">: <span class="detail" title="{{tableDef.itemTip(item||{})}}">{{itemName}}</span></span>
+    <span class="head_links">
+      <a class="link_list" href="#/{{table}}/list" ng-show="mode=='view'">&lt; Go to List</a>
+      <a class="link_edit" href="#/{{table}}/edit/{{item.id}}" onclick="setTmpItem({{item}})" ng-show="mode=='view' && (currUser.manager || currUser.admin)">Edit</a>
+      <a class="link_new" href="#/{{table}}/new/{{item.id}}" onclick="setTmpItem({{item}})" ng-show="mode=='view' && (currUser.manager || currUser.admin)">New</a>
+      <a class="link_del warn" ng-click="remove()" ng-show="mode=='view' && (currUser.manager || currUser.admin)">Delete</a>
+      <a class="link_live" href="#/livequery?hwtype={{item.hwtype}}&carrier={{item.carrier}}&region={{item.region}}&extra={{item.extra}}" ng-show="!!versions && table == 'cfg_devicetype'">Live Settings</a>
+      <span class="spaceholder">&nbsp;</span>
+    </span>
+  </h1>
+
+  <div class="itemdesc">{{tableDef.itemDesc(item||{})}}</div>
+
+  <form ng-show="state!='loading'" ng-submit="save()">
+    <div class="fields" ng-class="{view:(mode=='view')}">
+      <table>
+        <tbody data-name="{{formatAsName(field.name)}}" ng-repeat="field in tableDef.fieldList" ng-show="field.showFor(mode)">
+          <tr class="field">
+            <!-- Field Label -->
+            <td class="label" >{{field.disp}}</td>
+            
+            <!-- Field Value -->
+            <td class="valinput" ng-switch on="field.inputType()">
+
+              <!-- Switch Field Type (ref, checkbox, default) -->
+              <span ng-switch-when="ref">
+                <input name="{{formatAsName(field.name)}}" ng-show="mode=='view'" value="{{dispVal(item,field)}}" type="text" ng-readonly="true" ng-required="field.req"/>
+                    <select name="{{formatAsName(field.name)}}" ng-hide="mode=='view'" ng-model="item[field.name]"
+                        ng-disabled="locked(field)" ng-required="field.req"
+                        ng-options="refItem[field.refCol||'id'] as tableDefs[field.ref].itemName(refItem) for refItem in refTable(field)">
+                        <option ng-class="{tmpval:!field.nullDisp}" value="">{{field.nullDisp || '-- select one --'}}</option>
+                    </select>
+              </span>
+              <span ng-switch-when="checkbox" class="ckbox" ng-class="{on:item[field.name],lock:mode=='view'||locked(field)}">
+                <input name="{{formatAsName(field.name)}}" ng-model="item[field.name]" type="checkbox"
+                    ng-disabled="mode=='view' || locked(field)"/>
+              </span>
+              <span ng-switch-default>
+                <input name="{{formatAsName(field.name)}}" ng-model="item[field.name]" type="{{field.inputType()}}"
+                    ng-readonly="mode=='view' || locked(field)" ng-required="field.req"/>
+              </span>
+            </td>
+
+            <!-- Field link -->
+            <td class="link" ng-show="mode=='view' && field.inputType()=='ref' && item[field.name]"><a href="#/{{field.ref}}/view/{{field.refCol||'id'}}={{item[field.name]}}" onclick="setTmpItem({{ findRow( refTable(field), hash(field.getRefCol(),item[field.name]) ) }})" title="follow this reference">&gt;</a></td>
+
+          </tr>
+        </tbody>
+        <!-- TODO: Restructure the code such that generic files have less special case code like the cfg_superset section below. -->
+        <tbody ng-show="table=='cfg_superset'">
+          <tr class="field">
+            <td class="label">Categories</td>
+            <td class="valinput multicheck">
+              <div class="fmt">
+                <div class="checkbox_line" ng-repeat="category in category_list">
+                  <input id="{{category.name}}" type="checkbox" ng-model="category_choices[category.id]">
+                  <span class="label">{{tableDefs['setting_category'].itemName(category)}}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr class="field">
+            <td class="label">Publish to</td>
+            <td class="valinput multicheck">
+              <div class="fmt">
+                <div class="checkbox_line" ng-repeat="cloud in cloud_list">
+                  <input id="env_{{cloud.short_name}}"type="checkbox" ng-model="cloud_choices[cloud.short_name]">
+                  <span class="label">{{tableDefs['cloud_env'].itemName(cloud)}}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- <div class="warn_setting_mismatch" ng-show="settings_mismatch">
+        Following settings don't match: {{settings_mismatch}}
+    </div>
+    <div class="valdisp" ng-show="settings_mismatch">
+        {{settings_mismatch_values}}
+    </div> -->
+    <div class="warn_setting_mismatch" ng-show="settings_mismatch">
+        Following settings don't match:
+    </div>
+    <div class="warn_setting_mismatch_values" ng-show="settings_mismatch" ng-repeat="setting in settings_mismatch_list">
+        Setting: {{setting}}
+        <br />
+        Value Present: {{settings_mismatch_values[setting]['present']}}
+        <br />
+        Value Absent: {{settings_mismatch_values[setting]['absent']}}
+    </div>
+    <div class="more_new" ng-show="mode=='new'"><input class="checkbox_align" name="more_new" ng-model="moreNew"
+      type="checkbox"/> Stay on this page to create more after this.</div>
+
+    <div class="actions" ng-hide="mode=='view'">
+      <input type="submit" name="apply" value="Apply" onclick="this.blur(); setSubmitted(this,1)"/>
+      <a class="cancel" href="{{getCancelRoute()}}" onclick="setTmpItem({{item}})">Cancel</a>
+    </div>
+
+  </form>
+
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div ng-switch on="extraContent && 'yes'">
+    <div ng-switch-when="yes" ng-include src="extraContent"></div>
+  </div>
+
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+
+</div>
+

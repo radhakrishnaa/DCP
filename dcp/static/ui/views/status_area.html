@@ -1,0 +1,12 @@
+
+<div class="status_area {{statusType}}_status_area" ng-show="statusType" ng-class="{blip:blipError}">
+  <h2>{{statusTitle}}</h2>
+  <div class="status_body">
+    <div class="status_desc" ng-show="statusDesc">{{statusDesc}}</div>
+    <div ng-repeat="(head,detail) in statusDetails">
+      <b>{{head}}:</b>
+      <span ng-repeat="note in detail">&nbsp;<span class="status_note">{{note}}</span></span>
+    </div>
+  </div>
+</div>
+

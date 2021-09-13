@@ -1,0 +1,651 @@
+<form name="supeditor">
+    <div>
+        <div class="page-header">
+            <h1>Manage SUP {{path.upgradePath.sourceVersion}}
+                <sup data-ng-hide="!supeditor.$dirty" tooltip="Locally Changed"><small>Modified</small></sup>
+                <sup data-ng-hide="supeditor.$dirty" tooltip="No edits yet"><small>Unmodified</small></sup>
+                <button class="btn btn-mini" type="button"
+                        data-ng-show=0
+                        data-ng-disabled="!supeditor.$dirty"
+                        data-ng-click="displayPublishedPath()">Compare to
+                    saved...</button>
+            </h1>
+        </div>
+    </div>
+
+<!-- Source start -->
+<div class="well well-large">
+	<div class="row-fluid">
+		<div class="span6">
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>Source, Target and Filters</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Source</td>						
+						<td>
+					    <input id="sourceVersion" type="text" style="width: 300px;" data-ng-disabled="isPublishedPackage || !editAllowed"   data-ng-model="path.upgradePath.sourceVersion" data-ng-change="sourceUpdate();" data-ng-required=true>						
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Target</td>
+						<td><span id="targetVersion">{{path.upgradePath.targetVersion}}</span></td>
+						<td></td>
+					</tr>				
+					
+					<tr data-ng-repeat="(key, v) in
+                                        path.upgradePath.match track
+                                        by $index" >
+						<td>{{key}}</td>
+						<td><input type="text" style="width: 300px;" data-ng-disabled="isPublishedPackage  || !editAllowed " data-ng-model="path.upgradePath.match[key]"  data-ng-required=true></td>
+						<td> 
+	                    <button class="btn" type="button"  data-ng-disabled="isPublishedPackage  || !editAllowed" data-ng-click="deleteCriteria(key)"><i class="icon-trash"/></button>
+	                     </td>  
+					</tr>
+                    <tr>  <td colspan="2" align="center" > 
+					         <div class="input-append" >
+	                         <select  data-ng-model="newCriteria" data-ng-options="c for c in matchCriteriaList" data-ng-disabled="isPublishedPackage  || !editAllowed ">
+                             </select> 
+	                         <button class="btn" type="button"
+	                         data-ng-disabled="!validateCriteria() || isPublishedPackage  || !editAllowed"  data-ng-click="addCriteria()" ><i class="icon-plus"/>Add More Criteria</button></div>
+	                        <span class="text-error" data-ng-show="!isCriteriaValid()">Duplicate Criteria</span>
+	                      </td>
+	                </tr>
+					<!-- <tr>
+						<td>Language</td>
+						<td><input id="language" type="text" style="width: 300px;"	data-ng-model="path.upgradePath.match.language" ></td>
+					</tr> -->
+					<tr>
+					    <td style="padding-top: 2em;"><strong>Other Properties</strong></td>
+					    <td style="padding-top: 2em;"><strong>Value</strong></td>
+					</tr>
+					<tr>
+						<td>Approval</td>
+						<td><span id="approvalState">{{path.upgradePath.approval_state}}</span></td>
+					</tr>
+					<tr data-ng-controller="PathCompare">
+						<td>State</td>
+						<td><span id="state">{{path.upgradePath.state}}</span>
+                            <button class="btn btn-link" type="button" data-ng-click="displayPublishedPath()">Compare...</button> </td>
+					</tr>
+					<tr>
+						<td>Location</td>
+						<td><span id="packageStore">{{path.upgradePath.packageStore}}</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+        <div class="span6">
+            <div class="bs-callout bs-callout-info">
+                <div class="pull-right" style="display:none">
+                    <form class="form-inline">
+                        <button id="btnAutoRefresh" type="button" class="btn btn-mini
+                                                     btn-primary" data-ng-model="autoRefreshStats"
+                                btn-checkbox data-ng-click="toggleStatsAutoRefresh()">
+                            Auto Refresh?
+                        </button>
+                              <label class="sr-only" for="interval">every</label>
+                              <input id="statsRefreshInterval" type="number" data-ng-model="statsRefreshInterval"
+                                     min="1">
+                              <label class="sr-only">minutes</label>
+                    </form>
+                </div>
+                <h4>How is this <b>SUP</b> doing so far?</h4>
+                   <button id="downloadCSV" type="button"  ng-click="getListOfNotifiedDevice()" >Export Notified Device List</button>
+                    <button id="downloadCSV" type="button"  ng-click="getListOfFailureDevice()" >Export Failed Device List</button>
+                <br>
+               
+	                
+                <p>Out of a total
+                of <code><span id="statsChecked" tooltip="total.checked">{{stats['total'].checked}}</span></code>
+                devices that checked for update, we
+                deemed <code><span id="statsEligible" tooltip="total.eligible">{{stats['total'].eligible}}</span></code>
+                to be eligible and
+                asked <code><span id="statsComebackLater" tooltip="total.checked  -
+                stats['total'].eligible">{{stats['total'].checked  -
+                stats['total'].eligible}}</span></code> to come back
+                later. 
+                    <code><span id="statsNotified" tooltip="_system.REPORT.Notified">{{stats['_system.REPORT.Notified']}}</span></code>
+                    devices acknowledged with a <i>Notified</i>
+                    state.  <code><span id="statsRequestPerm" tooltip="_system.REPORT.RequestPermission">{{stats['_system.REPORT.RequestPermission']}}</span></code>
+                    of those requested permission from the user, out
+                    of
+                    which <code><span id="statsGetting" tooltip="_system.REPORT.GettingPackage">{{stats['_system.REPORT.GettingPackage']}}</span></code>
+                    of them agreed to upgrade and proceeded to
+                    download the
+                    package.  <code><span id="statsQuerying" tooltip="_system.REPORT.Querying">{{stats['_system.REPORT.Querying']}}</span></code>
+                    did download. Then they asked the user
+                    if they could <i>install now</i>.  Out of
+                    those, <code><span id="statsUpgrading" tooltip="_system.REPORT.Upgrading">{{stats['_system.REPORT.Upgrading']}}</span></code>
+                    agreed to install. That's
+                    how <code><span id="statsDone" tooltip="_system.REPORT.DONE">{{stats['_system.REPORT.DONE']}}</span></code>
+                    devices upgraded.</p>
+                <p id="lastModifiedTimestamp" class="muted"><i>Last checked: {{statsLastMod |
+                date:"EEEE, MMMM d, yyyy 'at' h:mm:ss a Z"}}</i></p>
+            </div>
+            <hr>
+            <!-- <div google-chart chart="chart" style="{{chart.cssStyle}}"/> -->
+            <!-- <hr> -->
+			<table class="table table-striped table-bordered
+                          table-condensed">
+                <caption><h4><p class="text-success">Number of devices checking for upgrade and allowed to, by check for update request type</p></h4> </caption>
+				<thead>
+					<tr>
+						<th>Check Type</th>
+						<th># checked</th>
+						<th># allowed</th>
+					</tr>
+				</thead>
+				<tbody>
+                    <tr data-ng-repeat="key in ['user', 'polling', 'setup', 'notification', 'other']">
+                        <td><span>{{key}}</span></td>
+                        <td><span id="{{'tblStats' + key + 'Checked'}}">{{stats[key].checked}}</span></td>
+                        <td><span id="{{'tblStats' + key + 'Eligible'}}">{{stats[key].eligible}}</span></td>
+                    </tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th>Total</th>
+						<th><span id="tblStatsTotalChecked">{{stats['total'].checked}}</span></th>
+						<th><span id="tblStatsTotalEligible">{{stats['total'].eligible}}</span></th>
+					</tr>
+				</tfoot>
+				<tbody>
+			</table>
+       </div>
+
+	</div>
+</div>
+<!-- Source end -->
+<!-- Metadata start -->
+<accordion close-others="0"> 
+
+
+<accordion-group
+	heading="Data Sent To Device"> <!--  
+        required string releaseNotes= 5; //any release notes for this package
+        optional uint32 installTime = 13; // Estimated install time for this upgrade package in minutes.  The update/install time is the time
+                                          // that the device is unable to place a 911 call. This includes the time for the
+                                          // update/install as well as a power cycle and, if applicable, any restoration of
+                                          // applications. Note that the update time is the worst case scenario and shall be
+                                          // rounded up to the nearest minute to ensure complete coverage with different
+                                          // package sizes and device configurations.
+                                          
+        optional string upgradeNotification   = 17; //any release notes that needs to be displayed to the user to notify about this upgrade
+        optional string preInstallNotes       = 18; //any release notes that needs to be displayed to the user before upgrade of this package
+        optional string postInstallNotes      = 19; //any release notes that needs to be displayed to the user after upgrade of this package
+
+	-->
+<accordion close-others="0"> <accordion-group
+    heading="End User Communication">
+		  <div class="controls controls-row">
+				<label class="span2">Link to Release Notes</label>
+				<input class="span12" type="text" data-ng-disabled="!editAllowed"
+					data-ng-model="path.metaData.releaseNotes">
+    		</div>
+         <div class="controls controls-row">
+				<label class="span1">Download Options Message</label>
+				<textarea rows="3" class="span4" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.downloadOptionsNotes"></textarea>
+                		<label class="span1">Install Time</label>
+				<input class="span1" type="number" data-ng-disabled="!editAllowed"
+					data-ng-model="path.metaData.installTime">
+    		</div>
+         <div class="controls controls-row">
+				<label class="span1">Pre Download Message</label>
+				<textarea rows="3" class="span4" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.upgradeNotification"></textarea>
+				<label class="span1">Pre Install Message</label>
+				<textarea class="span4" rows="3" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.preInstallNotes"></textarea>
+				<label class="span1">Post Install Message</label>
+				<textarea rows="3" class="span4" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.postInstallNotes"></textarea>
+				</div>
+	
+</accordion-group><accordion-group id="myUpgradeWkflowHeading" heading="Upgrade Work Flow">
+		
+	<table  class="table  table-condensed" style="background-color:#F7F7F7">
+		<thead class="info">
+		<tr><th colspan="8"  style="text-align: center; background-color:#ECF1EF;font-size: 12px;">Default</th	></tr>
+			<tr style="background-color:#ECF1EF;font-size: 12px;">
+			    <th style="width:10%">Download Reminder (minutes)</th>
+				<th style="width:10%">Wifi only</th>
+				<th style="width:10%">Forced upgrade</th>
+				<th style="width:10%">Show Pre Download Dialog</th>
+				<th style="width:10%">Show Download Options</th>
+				<th style="width:10%">Pre Download Notification Expiration (minutes)</th>
+				<th style="width:10%">Pre Install Notification Expiration (minutes)</th>
+				<th style="width:10%">Extra space (in bytes)</th>
+			</tr>
+		</thead>
+		<tr>
+			<td><input style="width:80px;" class="span3" type="text" data-ng-disabled="!editAllowed" list="annoysamples" data-ng-model="path.metaData.annoy" />
+				<datalist id="annoysamples">
+					<option value="60" />
+					<option value="60,60,60,..." />
+					<option value="60,120,240" />
+					<option value="60,120,240,..." />
+				</datalist>
+			</td>
+			<td><input type="checkbox" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.wifionly" data-ng-true-value="true" data-ng-false-value="false"></td>
+			<td><input type="checkbox" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.forced" data-ng-true-value="true" data-ng-false-value="false"></td>			
+			
+			
+			<td><input type="checkbox" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.showPreDownloadDialog" data-ng-true-value="true" data-ng-false-value="false"></td>
+			<td><input type="checkbox" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.showDownloadOptions" data-ng-true-value="true" data-ng-false-value="false"></td>
+			<td><input class="span1" type="number" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.preDownloadNotificationExpiryMins"></td>
+			<td><input class="span1" type="number" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.preInstallNotificationExpiryMins"></td>
+			<td><input class="span1" type="number" data-ng-disabled="!editAllowed" data-ng-model="path.metaData.extraSpace"></td>
+			
+		</tr>
+	</table>
+
+	<div class="controls controls-row" >
+		<select id="UpgradeWkflowDrpdwn" data-ng-model="path.uploadInfo.templatename" data-ng-options="c for c in templateOptions" data-ng-change="uiworkflowUpdate()" data-ng-disabled="!editAllowed">
+        </select> <span >for KK MR1+ SW Versions only</span>
+	</div>
+
+
+	<table class="table  table-condensed" style="background-color:#F7F7F7">
+		<thead>
+			<tr><th colspan="8"  style="text-align: center; background-color:#ECF1EF;font-size: 12px;" >End User UI Workflow Control</th></tr>
+			<tr  style="background-color:#ECF1EF; font-size: 12px;">
+				<th style="width:10%;vertical-align: top;">Triggered By</th>
+				<th style="width:10%;vertical-align: top;">Wifi Only</th>
+				<th style="width:10%;vertical-align: top;">Forced</th>
+				<th style="width:10%;vertical-align: top;">Show PreDownload Dialog</th>
+				<th style="width:10%;vertical-align: top;">Show Download Options</th>
+				<th style="width:10%;vertical-align: top;">Pre Download Notification Expiration (minutes):</th>
+				<th style="width:10%;vertical-align: top;">Pre Install Notification Expiration (minutes):</th>
+				<th style="width:10%;vertical-align: top;">&nbsp;</th>
+			</tr>
+		</thead>		
+		<tr ng-repeat="(triggeredBy,uicontrol) in path.metaData.uiWorkflowControl">		
+			<td>{{ triggeredBy}}</td>
+			<td><input id="myWifiChkbx" type="checkbox" data-ng-disabled="!editAllowed || (path.uploadInfo.templatename!='Custom')" data-ng-model="uicontrol.wifionly"></td>
+			<td><input id="myForced" type="checkbox" data-ng-disabled="!editAllowed || (path.uploadInfo.templatename!='Custom')" data-ng-model="uicontrol.forced"></td>
+			<td><input id="myShowPreDownloadDialog" type="checkbox" data-ng-disabled="!editAllowed || (path.uploadInfo.templatename!='Custom')" data-ng-model="uicontrol.showPreDownloadDialog"></td>
+			<td><input id="myShowDownloadOptions" type="checkbox" data-ng-disabled="!editAllowed || (path.uploadInfo.templatename!='Custom')" data-ng-model="uicontrol.showDownloadOptions"></td>
+			<td><input class="span1" type="number" data-ng-disabled="!editAllowed || (path.uploadInfo.templatename!='Custom')"  data-ng-model="uicontrol.preDownloadNotificationExpiryMins"></td>
+			<td><input class="span1" type="number" data-ng-disabled="!editAllowed || (path.uploadInfo.templatename!='Custom')" data-ng-model="uicontrol.preInstallNotificationExpiryMins"></td>
+			<td></td>
+		</tr>			
+	</table>
+
+</accordion-group>	
+
+<accordion-group heading="Configuration">
+  
+     <div class="controls controls-row"   >
+        Polling Interval:
+		<select data-ng-model="pollingInterval"  data-ng-options="c for c in pollingIntervalOptions"  data-ng-change="pollingIntervalUpdate(pollingInterval)" data-ng-disabled="!editAllowed"   >
+        </select> 
+	</div>
+	
+	
+ 
+</accordion-group>
+
+<accordion-group heading="Advanced (information only)">
+    <div class="row-fluid">
+        <div class="span16">
+        <div class="span4 controls control-row">
+			<dl class="dl-horizontal">
+				<dt>Source</dt>
+				<dd>{{path.metaData.minVersion}}</dd>
+				<dt>Target</dt>
+				<dd>{{path.metaData.version}}</dd>
+				<dt>Meta Data Version</dt>
+				<dd>{{path.metaData.metaVersion}}</dd>
+                <dt>Size (bytes)</dt>
+                <dd>{{path.metaData.size | number}}</dd>
+                <dt>MD5</dt>
+                <dd>{{path.upgradePath.md5 || "none (Re-upload package if needed)"}}</dd>
+			</dl>
+		</div>
+        <div class="span4 controls control-row">
+            <dl class="dl-horizontal">
+                <dt>Service Control On?</dt>
+                <dd>{{path.metaData.serviceControlEnabled}}</dd>
+                <dt>Service Timeout (s)</dt>
+                <dd>{{path.metaData.serviceTimeoutSeconds}}</dd>
+                <dt>Package ID</dt>
+                <dd>{{path.metaData.packageID}}</dd>
+                <dt>Download URL</dt>
+                <dd>{{path.metaData.downloadUrl == "" ? "undefined" : path.metaData.downloadUrl}}</dd>
+                <dt>Continue on Error?</dt>
+                <dd>{{path.metaData.continueOnServiceError}}</dd>
+            </dl>
+        </div>
+        <div class="span4 controls control-row">
+            <dl class="dl-horizontal">
+                <dt>Tracking Tag</dt>
+                <dd>{{path.metaData.trackingId == "" ? "undefined" : path.metaData.trackingId}}</dd>
+                <dt>Reporting Tag</dt>
+                <dd>{{path.metaData.reportingTag == "" ? "undefined" : path.metaData.reportingTag}}</dd>
+                <dt>Fingerprint</dt>
+                <dd>{{path.metaData.fingerprint == "" ? "undefined" : path.metaData.fingerprint}}</dd>
+                <dt>Flavour</dt>
+                <dd>{{path.metaData.flavour == "" ? "undefined" : path.metaData.flavour}}</dd>
+            </dl>
+        </div>
+        </div>
+    </div>
+</accordion-group>
+
+
+</accordion-group> <!-- Metadata end --> 
+
+<!-- Lists Start --> 
+<div data-ng-show="!editAllowed">
+<accordion-group heading="Lists">
+<div data-ng-controller="ListTargetsController">
+	<accordion close-others="0">
+		<div data-ng-repeat="target1 in path.upgradePath.listTargets" >
+			<accordion-group heading="{{ getListDateTimePickerLinkText(target1.startDate) }} : {{formatTargetList(target1)}}">
+			</accordion-group>
+		</div>
+	</accordion>
+</div>
+</accordion-group>
+</div>
+
+<div data-ng-show="!!editAllowed">
+<accordion-group id="myLists" heading="Lists">
+<div data-ng-controller="ListTargetsController">
+	<accordion close-others="0">
+		<div id="myNewListsTarget" data-ng-repeat="target in path.upgradePath.listTargets" data-ng-init="outerIndex = $index">
+			<accordion-group heading="{{ getListDateTimePickerLinkText(target.startDate) }} : {{formatTargetList(target)}}">
+                <form name="myForm" class="form-inline">
+                    <div class="controls controls-row">
+					            <label class="dropdown span5">
+								    <a data-container="body" class="dropdown-toggle" id="listDateTimeDropdown_{{outerIndex}}" role="button" data-toggle="dropdown" data-target="#" href="#">{{ getListDateTimePickerLinkText(target.startDate) }}</a>
+								    <ul data-container="body" class="dropdown-menu" role="menu" style="position: relative;">
+								        <datetimepicker data-container="body" data-ng-model="target.startDate" data-datetimepicker-config="getListDateTimePickerDefaults()" data-datetimepicker-dropdown-selector="listDateTimeDropdown_{{outerIndex}}" />
+								    </ul>
+								</label>
+                    </div>
+                    <div class="controls controls-row">
+                        <div class="input-append span5">  // <!--input auto-complete ui-items="names" ng-model="selected"-->
+                        	<!--  select data-ng-model="listSelection" data-ng-options="item.name for item in listArray"></select -->
+                        	<input id="myListNameSearch" auto-complete data-ng-model="listSelection" ui-items="allListNames" style="height:24px;" placeholder="Type List Name to Search">
+                        	[<button id="myAdd" class="btn" type="button" data-ng-click="target.listIds.push(getListIdFromName(listSelection))" data-ng-disabled="!(getListIdFromName(listSelection)) || (target.listIds.indexOf(getListIdFromName(listSelection)) != -1)">add</button>]
+                        </div>      
+                        <!--  data-ng-click="target.listIds.push((listArray.get(listSelection)).guid)" ng-disabled="!(listSelection.guid) || (target.listIds.indexOf(listSelection.guid) != -1)">add -->
+                    </div>
+                    
+					<!-- hr data-ng-show="target.listIds.length > 0" -->	
+					<hr>
+					<div class="row-fluid">
+						<div class="span4">		
+							<table class="table table-striped table-bordered">				
+								<tbody>
+    								<tr data-ng-repeat="list in target.listIds"> 
+    									<td><span class="add-on"><a href="/upgrades#/lists">{{allLists[list]}}</a></span></td>
+			        					<td><span class="span1">
+			        						<!-- a class="btn" type="button" data-ng-disabled="!editAllowed" data-ng-click="target.listIds.splice(target.listIds.indexOf(list),1)">delete</a></td -->
+			        						<button class="btn" type="button" data-ng-disabled="!editAllowed" data-ng-click="target.listIds.splice(target.listIds.indexOf(list),1)">delete</button></td>
+    										</span>
+    								</tr>
+    							</tbody>  			
+							</table>
+						</div>
+					</div>
+					<hr>
+					
+				</form>
+				<div class="row-fluid">
+						<button class="btn btn-danger" type="button" data-ng-disabled="!editAllowed" data-ng-click='deleteListTarget(target)'>Delete</button>
+				</div>
+			</accordion-group>
+		</div>
+	</accordion>
+	
+	<div class="row-fluid">
+		<div class="span2">
+			<button id="myAddNewListsTarget" class="btn" type="button" data-ng-disabled="!editAllowed" data-ng-click='addListTarget()'>Add new lists target</button>
+		</div>
+
+	</div>
+
+</div>
+</accordion-group>
+</div>
+<!-- Lists End --> 
+
+<!-- Public Access Block Start -->
+<div data-ng-show="path.upgradePath.privateAccessOnly != undefined && path.upgradePath.privateAccessOnly == false">
+
+<accordion-group heading="Polling Schedule">
+<div data-ng-controller="SchedulerController">
+
+	<accordion close-others="0">
+		<div data-ng-repeat="control in path.upgradePath.controls" data-ng-init="outerIndx = $index" data-ng-click="pollingScheduleDeviceEligibleCheck(control)">
+		<accordion-group heading="{{formatData(control)}}">
+         
+        <table class="table table-striped table-bordered
+                          table-condensed">
+                <caption><h4><p class="text-success">Number of devices checking for upgrade for reporting tag {{control.reportingTags}}</p></h4> </caption>
+				<thead>
+					<tr>
+						<th>Checked</th>
+						<th>Eligible Now</th>
+						<th>Come Back Later</th>
+						<th>Notified</th>
+						<th>Request Permission</th>
+						<th>Getting Descriptor</th>
+						<th>Getting Pkg</th>
+						<th>Querying</th>
+						<th>Upgrading</th>
+						<th>Done</th>
+					</tr>
+				</thead>
+				<tbody>
+                        <td><span>{{perPollingCheck(control)}}</span></td>
+                        <td><span>{{perPollingEligibleNow(control)}}</span></td>
+                        <td><span>{{comebacklater(control)}}</span></td>
+                        <td><span>{{notified(control)}}</span></td>
+                        <td><span>{{requestPermission(control)}}</span></td>
+                        <td><span>{{gettingDescriptor(control)}}</span></td>
+                        <td><span>{{gettingPackage(control)}}</span></td>
+                        <td><span>{{querying(control)}}</span></td>
+                        <td><span>{{upgrading(control)}}</span></td>
+                        <td><span>{{done(control)}}</span></td>
+                    </tr>
+				</tbody>
+				<tbody>
+			</table>
+	
+                <form name="myForm" class="form-inline">
+                    <div class="controls controls-row" >
+                    
+                         <label class="dropdown span5">
+							<a data-container="body" class="dropdown-toggle" id="PdateTimeDropdown_{{outerIndx}}"  data-ng-disabled="!editAllowed"  data-ng-click="onPickerClick()" role="button" data-ng-model="control.startDate"  data-ng-mouseenter="onDatePickerSelected(control)" data-ng-change="onDateChanged(control)"  data-toggle="dropdown" data-target="#" href="#">{{getPollingScheduleDateTimePickerLinkText(control)}}</a> 
+						<ul data-container="body" class="dropdown-menu" role="menu" style="position: relative;">
+					    <datetimepicker data-container="body" data-picker-click="path.pickerClicked" data-ng-model="control.startDate"  data-datetimepicker-config="getPollingScheduleDateTimePickerDefaults(control)" data-datetimepicker-dropdown-selector="PdateTimeDropdown_{{outerIndx}}" />
+						 </ul>
+                        </label>
+                        
+                        <div class="input-prepend span3">
+                            <span class="add-on">For</span>
+                            <input class="input-small" type="number" min="{{setMinValue(control)}}" max={{setMaxValue(control)}} data-ng-disabled="!editAllowed" data-ng-model="control.numDays" data-ng-change="onNumDaysChange(control)">
+                            <span class="add-on">day(s)</span>
+                        </div>
+                        <!--  div class="input-prepend span3">
+                          <span class="add-on">until</span>
+                          <input class="input-medium" data-ng-model="myendDate" data-ng-init="myendDate=autofillEndDate(control,'PST')" ui-date-format="M/d/yyyy" ui-date="control.eopt" data-ng-change="updateEndDate(control,myendDate,'PST')">
+                        </div -->
+                       
+                        <div class="input-prepend span2">
+                            <span class="add-on">for</span>
+                            <input class="input-mini" type="number" min="6" max="24" displayhoursfromseconds data-ng-disabled="!editAllowed" data-ng-model="control.timeSlots[0].duration" />
+                            <span class="add-on">hrs</span>
+                        </div>
+
+                    </div>
+                    <br/>
+                    <div class="controls controls-row control-group" ng-class="{ error: myForm.myTagField.$invalid }">
+
+                        <div class="input-prepend span3">
+                            <span class="add-on">Allow</span>
+                            <input class="input-small" type="number" min="1" max="100" data-ng-disabled="!editAllowed" data-ng-model="control.timeSlots[0].percentDownloads">
+                            <span class="add-on"> % downloads</span>
+                        </div>
+                        <!--  algorithm -->
+                        <div class="input-prepend span7">
+                            <label class="span2"><input data-ng-disabled="!editAllowed" data-ng-model="control.algorithm" value="FLAT_PERCENTAGE" type="radio" ng-checked="true" name="listType" >&nbsp;apply rate each day</label>
+							<label class="span3"><input data-ng-disabled="!editAllowed" data-ng-model="control.algorithm" value="INCREMENTING_PERCENTAGE" type="radio" name="listType">&nbsp;achieve rate by end of schedule</label>
+                        </div>
+
+                    </div>
+                    <br/>
+                    <div class="controls controls-row control-group" ng-class="{ error: myForm.myTagField.$invalid }">
+                       <div  class="input-prepend span7">
+                           <span class="add-on">Only allow devices provisioned more than</span>
+                            <input class="input-mini" type="number" min="1" max="60"   tooltip-html-unsafe="editable only if start time is in the future" data-ng-disabled="!editAllowed || provisionTimeDisable(control)" displaydaysinseconds data-ng-model="control.provisionTimeDelta"/>
+                     	   <span class="add-on">  day(s) ago</span>
+                        
+                        </div>
+                        <div class="input-prepend span4">
+                            <span class="add-on">Report tags</span>
+                            <input class="input-xlarge" type="text" name="myTagField" data-ng-model="control.reportingTags" autouppercase 
+                                    novalidate data-ng-maxlength="100" data-ng-disabled="!editAllowed"
+                                    data-ng-pattern="/^([A-Za-z][A-Za-z0-9_]{0,99})(,|,[A-Za-z][A-Za-z0-9_]{0,99}){0,4}$/"
+                                    tooltip-html-unsafe="Put a comma between tags, no spaces.<br/>Use only letters, numbers & underscore" 
+                                    tooltip-placement="right" tooltip-popup-delay="500"/>
+                        </div>
+                    </div>
+                    <div class="controls controls-row control-group"  ng-class="{ error: myForm.myTagField.$invalid }">
+	                    <div class="bs-callout bs-callout-info">
+	                           &nbsp;&nbsp;&nbsp;&nbsp;
+	                           <span  class="add-on">{{control.deviceEligible}} </span>
+	                           
+	                    </div>
+                    </div>
+				</form>
+				<div class="row-fluid">
+						<button class="btn btn-danger" type="button" data-ng-disabled="!editAllowed" data-ng-click='deleteSchedule(control)'>Delete</button>
+				</div> <!-- row -->
+			</accordion-group>
+		</div> <!-- control in path.upgradePath.controls -->
+	</accordion>
+	<div class="row-fluid">  
+		<div class="span2">
+			<button class="btn" type="button" data-ng-disabled="!editAllowed" data-ng-click='addSchedule()'>Add new schedule</button>
+		</div> <!-- span -->
+	</div> <!-- row -->
+</div> <!-- SchedulerController -->
+</accordion-group> 
+
+<accordion-group heading="Upgrade Options">
+<div data-ng-controller="UpgradeOptionsController">
+
+    <accordion close-others="0">
+        <div class="controls controls-row">
+            <label class="checkbox span2"> <input type="checkbox" data-ng-disabled="!editAllowed" data-ng-checked="path.upgradePath.userStartTime" data-ng-model="allowUserRequestChecked" 
+            	data-ng-change="userStartTimeChange(allowUserRequestChecked, path.upgradePath.userStartTime)"/>Allow User Requests</label>
+            <label class="dropdown span5" data-ng-show="path.upgradePath.userStartTime > 0">
+			    <a  data-container="body" data-ng-click="onPickerClick()" class="dropdown-toggle" id="userDateTimeDropdown" role="button" data-toggle="dropdown" data-target="#" href="#">{{ getDateTimePickerLinkText(path.upgradePath.userStartTime) }}</a>
+			    <ul data-ng-show="!!editAllowed" data-container="body" class="dropdown-menu" role="menu" style="position: relative;">
+			        <datetimepicker data-picker-click="path.pickerClicked" data-container="body" data-ng-model="path.upgradePath.userStartTime" data-datetimepicker-config="getDateTimePickerDefaults()" data-datetimepicker-dropdown-selector="userDateTimeDropdown" />
+			    </ul>
+			</label>
+        </div>
+
+        <div class="controls controls-row">
+            <label class="checkbox span2"> <input type="checkbox" data-ng-disabled="!editAllowed" data-ng-checked="path.upgradePath.setupStartTime" data-ng-model="allowSetupRequestChecked" 
+            	data-ng-change="setupStartTimeChange(allowSetupRequestChecked, path.upgradePath.setupStartTime)">Allow Setup Requests</label>
+            <div class="dropdown span5" data-ng-show="path.upgradePath.setupStartTime > 0">
+			    <a  data-container="body" class="dropdown-toggle" id="setupDateTimeDropdown" role="button" data-toggle="dropdown" data-target="#" href="#">{{ getDateTimePickerLinkText(path.upgradePath.setupStartTime) }}</a>
+			    <ul data-ng-show="!!editAllowed" data-container="body" class="dropdown-menu" role="menu" style="position: relative;">
+			        <datetimepicker data-container="body" data-ng-model="path.upgradePath.setupStartTime" data-datetimepicker-config="getDateTimePickerDefaults()" data-datetimepicker-dropdown-selector="setupDateTimeDropdown"/>
+			    </ul>
+			</div>
+        </div>
+
+    </accordion>
+
+</div>
+</accordion-group>
+    
+<accordion-group heading="CDN (beta)">
+	<accordion close-others="0">
+      		<div class="controls controls-row">
+            	<label class="checkbox inline span1"><input type="checkbox" data-ng-disabled="!editAllowed" data-ng-model="path.upgradePath.defaultUrl.encrypted">Encrypted</label>
+                <label class="span2 text-right">Base URL</label><input class="span9" type="text" data-ng-disabled="!editAllowed" data-ng-model="path.upgradePath.defaultUrl.baseUrl">
+            </div>
+	</accordion>
+</accordion-group>
+
+</div>
+
+<!-- Public Access Block End -->
+
+<div class="well well-small">
+	<div class="block" id="actions">
+        <input id=mySaveBtn type="submit" value="Save" data-ng-show="userCanEdit() && isAllowedAction('EDITSAVE')"
+           class="btn" data-ng-click="save()"/>
+        <input type="submit" value="Request Approval" data-ng-show="userCanEdit() && isAllowedAction('REQUEST_APPROVAL')" 
+            class="btn" data-ng-click="post_next_action('REQUEST_APPROVAL')"/>
+        <input type="submit" value="Approve" data-ng-show="userCanApprove() && isAllowedAction('APPROVE')" 
+            class="btn" data-ng-click="post_next_action('APPROVE')"/>
+        <input type="submit" value="Publish" data-ng-show="userCanApprove() && isAllowedAction('PUBLISH')" 
+            class="btn" data-ng-click="post_next_action('PUBLISH')"/>
+		<input type="submit" value="Run" data-ng-show="userCanEdit() && isAllowedAction('RUN')" data-ng-disabled="path.upgradePath.state=='RUNNING'"
+		    class="btn" data-ng-click="enable_upgradepath()"/>
+		<input type="submit" value="Stop" data-ng-show="userCanEdit() && isAllowedAction('STOP')" data-ng-disabled="path.upgradePath.state!='RUNNING'"
+		    class="btn" data-ng-click="disable_upgradepath()"/>
+		<input id="myEditBtn" type="submit" value="Edit" data-ng-show="userCanEdit() && isAllowedAction('NEWVERSION')"
+		    class="btn" data-ng-click="post_next_action('NEWVERSION')"/>
+		<input id="myCancelBtn" type="submit" value="Cancel" data-ng-show="userCanEdit() && isAllowedAction('CANCEL')"
+		    class="btn" data-ng-click="post_next_action('CANCEL')"/>
+		<input type="submit" value="Open to Public" style="float:right" data-ng-show="userCanEdit() && (path.upgradePath.privateAccessOnly == undefined || path.upgradePath.privateAccessOnly == true)"
+		    class="btn" data-ng-click="setPublicAccessOn()"/>
+		<input type="submit" value="Close to Public" style="float:right" data-ng-show="userCanEdit() && (path.upgradePath.privateAccessOnly != undefined && path.upgradePath.privateAccessOnly == false)"
+		    class="btn" data-ng-click="setPublicAccessOff()"/>
+		<input id="myDeleteBtn" type="submit" value="Delete" style="float:right" data-ng-show="userCanEdit()"
+		    class="btn" data-ng-click="openMessageBox()"/>
+	</div>
+</div>
+
+<accordion-group id="myListMatch" heading="Test Target List match & Upgrade date for device">
+<div data-ng-controller="VerifyController">
+	<accordion close-others="0">
+		<div class="controls controls-row">
+			<div clas	s="span16">
+               		<pre>
+               		<br> Find out if your device will be eligible for upgrade when you have NOT set any Upgrade Options.
+               		<br> All target lists that are defined in this Upgrade path are checked to determine if the device is eligible to upgrade.
+               		<br> If any Upgrade Options is set, then your device will be eligible to upgrade as per your Upgrade Option settings.
+               		<br> Any result you see here will be over ruled by your Upgrade Options settings.
+               		</pre>
+               <div class="block" id="actions">
+                       <input id="myImeiAndSerialno" type="text" class="input-large" data-ng-model="imei" placeholder="Enter IMEI/SerialNumber"/>
+                       <input id="myCheckBtn" type="submit" value="Check" class="btn" data-ng-disabled="!imei" style="margin-bottom:10px;" data-ng-click="checkInTlms(imei)"/>
+               </div>
+            </div>
+		</div>
+		
+		<div modal="shouldBeOpen" close="closeModal()" options="options">
+        	<div class="modal-header">
+            	<h4>Target List Match for IMEI/Serialnumber : {{imei}}</h4>
+        	</div>
+        	<div class="modal-body">
+          		<pre>{{eligibityString}}</pre>
+        	</div>
+        	<div class="modal-footer">
+            	<button class="btn btn-primary" ng-click="closeModal()">Cancel</button>
+        	</div>
+		</div>
+	</accordion>
+</div>
+</accordion-group>
+
+<accordion-group heading="Debug">
+    <div class="well well-large">
+    <pre>path={{path | json}}</pre>
+	</div>
+</accordion-group> </accordion>
+</form>

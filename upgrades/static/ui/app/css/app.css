@@ -1,0 +1,521 @@
+
+      /* Sticky footer styles
+      -------------------------------------------------- */
+
+      html,
+      body {
+        height: 100%;
+        /* The html and body elements cannot have any padding or margin. */
+      }
+
+      /* Wrapper for page content to push down footer */
+      #wrap {
+        min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        /* Negative indent footer by it's height */
+        margin: 0 auto -60px;
+      }
+
+      /* Set the fixed height of the footer here */
+      #push,
+      #footer {
+        height: 60px;
+      }
+      #footer {
+        background-color: #f5f5f5;
+      }
+
+      /* Lastly, apply responsive CSS fixes as necessary */
+      @media (max-width: 767px) {
+        #footer {
+          margin-left: -20px;
+          margin-right: -20px;
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+      }
+
+
+
+      /* Custom page CSS
+      -------------------------------------------------- */
+      /* Not required for template or sticky footer method. */
+
+      #wrap > .container {
+        padding-top: 60px;
+      }
+      .container .credit {
+        margin: 20px 0;
+      }
+
+      code {
+        font-size: 80%;
+      }
+
+/*
+Something I picked up at http://ericbidelman.tumblr.com/post/14636214755/making-file-inputs-a-pleasure-to-look-at
+.button::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.button:before {
+  content: 'Select some files';
+  display: inline-block;
+  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+.button:hover:before {
+  border-color: black;
+}
+.button:active:before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+*/
+/* For input type="file" */
+   ::-webkit-file-upload-button {
+  display: inline-block;
+  *display: inline;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  *margin-left: .3em;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  *background-color: #e6e6e6;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  border: 1px solid #cccccc;
+  *border: 0;
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  *zoom: 1;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.input-append ::-webkit-file-upload-button,
+.input-prepend ::-webkit-file-upload-button {
+  vertical-align: top;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+          border-radius: 0;
+}
+
+.input-prepend ::-webkit-file-upload-button {
+  margin-right: -1px;
+}
+
+.input-prepend ::-webkit-file-upload-button:first-child {
+  -webkit-border-radius: 4px 0 0 4px;
+     -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+}
+
+.input-append ::-webkit-file-upload-button {
+  margin-left: -1px;
+}
+
+/* For Jenkins Upload Dialog, courtesy http://cssload.net/en/animated_text */
+#inTurnFadingTextG{
+    width:40em;
+}
+
+.inTurnFadingTextG{
+    color:#000000;
+    font-family:Arial;
+    font-size:25px;
+    text-decoration:none;
+    font-weight:normal;
+    font-style:normal;
+    float:left;
+    -moz-animation-name:bounce_inTurnFadingTextG;
+    -moz-animation-duration:5.2s;
+    -moz-animation-iteration-count:infinite;
+    -moz-animation-direction:linear;
+    -webkit-animation-name:bounce_inTurnFadingTextG;
+    -webkit-animation-duration:5.2s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-direction:linear;
+    -ms-animation-name:bounce_inTurnFadingTextG;
+    -ms-animation-duration:5.2s;
+    -ms-animation-iteration-count:infinite;
+    -ms-animation-direction:linear;
+    -o-animation-name:bounce_inTurnFadingTextG;
+    -o-animation-duration:5.2s;
+    -o-animation-iteration-count:infinite;
+    -o-animation-direction:linear;
+    animation-name:bounce_inTurnFadingTextG;
+    animation-duration:5.2s;
+    animation-iteration-count:infinite;
+    animation-direction:linear;
+}
+
+#inTurnFadingTextG_1{
+    -moz-animation-delay:0.52s;
+    -webkit-animation-delay:0.52s;
+    -ms-animation-delay:0.52s;
+    -o-animation-delay:0.52s;
+    animation-delay:0.52s;
+}
+
+#inTurnFadingTextG_2{
+    -moz-animation-delay:0.65s;
+    -webkit-animation-delay:0.65s;
+    -ms-animation-delay:0.65s;
+    -o-animation-delay:0.65s;
+    animation-delay:0.65s;
+}
+
+#inTurnFadingTextG_3{
+    -moz-animation-delay:0.78s;
+    -webkit-animation-delay:0.78s;
+    -ms-animation-delay:0.78s;
+    -o-animation-delay:0.78s;
+    animation-delay:0.78s;
+}
+
+#inTurnFadingTextG_4{
+    -moz-animation-delay:0.91s;
+    -webkit-animation-delay:0.91s;
+    -ms-animation-delay:0.91s;
+    -o-animation-delay:0.91s;
+    animation-delay:0.91s;
+}
+
+#inTurnFadingTextG_5{
+    -moz-animation-delay:1.04s;
+    -webkit-animation-delay:1.04s;
+    -ms-animation-delay:1.04s;
+    -o-animation-delay:1.04s;
+    animation-delay:1.04s;
+}
+
+#inTurnFadingTextG_6{
+    -moz-animation-delay:1.17s;
+    -webkit-animation-delay:1.17s;
+    -ms-animation-delay:1.17s;
+    -o-animation-delay:1.17s;
+    animation-delay:1.17s;
+}
+
+#inTurnFadingTextG_7{
+    -moz-animation-delay:1.3s;
+    -webkit-animation-delay:1.3s;
+    -ms-animation-delay:1.3s;
+    -o-animation-delay:1.3s;
+    animation-delay:1.3s;
+}
+
+#inTurnFadingTextG_8{
+    -moz-animation-delay:1.43s;
+    -webkit-animation-delay:1.43s;
+    -ms-animation-delay:1.43s;
+    -o-animation-delay:1.43s;
+    animation-delay:1.43s;
+}
+
+#inTurnFadingTextG_9{
+    -moz-animation-delay:1.56s;
+    -webkit-animation-delay:1.56s;
+    -ms-animation-delay:1.56s;
+    -o-animation-delay:1.56s;
+    animation-delay:1.56s;
+}
+
+#inTurnFadingTextG_10{
+    -moz-animation-delay:1.69s;
+    -webkit-animation-delay:1.69s;
+    -ms-animation-delay:1.69s;
+    -o-animation-delay:1.69s;
+    animation-delay:1.69s;
+}
+
+#inTurnFadingTextG_11{
+    -moz-animation-delay:1.82s;
+    -webkit-animation-delay:1.82s;
+    -ms-animation-delay:1.82s;
+    -o-animation-delay:1.82s;
+    animation-delay:1.82s;
+}
+
+#inTurnFadingTextG_12{
+    -moz-animation-delay:1.95s;
+    -webkit-animation-delay:1.95s;
+    -ms-animation-delay:1.95s;
+    -o-animation-delay:1.95s;
+    animation-delay:1.95s;
+}
+
+#inTurnFadingTextG_13{
+    -moz-animation-delay:2.08s;
+    -webkit-animation-delay:2.08s;
+    -ms-animation-delay:2.08s;
+    -o-animation-delay:2.08s;
+    animation-delay:2.08s;
+}
+
+#inTurnFadingTextG_14{
+    -moz-animation-delay:2.21s;
+    -webkit-animation-delay:2.21s;
+    -ms-animation-delay:2.21s;
+    -o-animation-delay:2.21s;
+    animation-delay:2.21s;
+}
+
+#inTurnFadingTextG_15{
+    -moz-animation-delay:2.34s;
+    -webkit-animation-delay:2.34s;
+    -ms-animation-delay:2.34s;
+    -o-animation-delay:2.34s;
+    animation-delay:2.34s;
+}
+
+#inTurnFadingTextG_16{
+    -moz-animation-delay:2.47s;
+    -webkit-animation-delay:2.47s;
+    -ms-animation-delay:2.47s;
+    -o-animation-delay:2.47s;
+    animation-delay:2.47s;
+}
+
+#inTurnFadingTextG_17{
+    -moz-animation-delay:2.6s;
+    -webkit-animation-delay:2.6s;
+    -ms-animation-delay:2.6s;
+    -o-animation-delay:2.6s;
+    animation-delay:2.6s;
+}
+
+#inTurnFadingTextG_18{
+    -moz-animation-delay:2.73s;
+    -webkit-animation-delay:2.73s;
+    -ms-animation-delay:2.73s;
+    -o-animation-delay:2.73s;
+    animation-delay:2.73s;
+}
+
+#inTurnFadingTextG_19{
+    -moz-animation-delay:2.86s;
+    -webkit-animation-delay:2.86s;
+    -ms-animation-delay:2.86s;
+    -o-animation-delay:2.86s;
+    animation-delay:2.86s;
+}
+
+#inTurnFadingTextG_20{
+    -moz-animation-delay:2.99s;
+    -webkit-animation-delay:2.99s;
+    -ms-animation-delay:2.99s;
+    -o-animation-delay:2.99s;
+    animation-delay:2.99s;
+}
+
+#inTurnFadingTextG_21{
+    -moz-animation-delay:3.12s;
+    -webkit-animation-delay:3.12s;
+    -ms-animation-delay:3.12s;
+    -o-animation-delay:3.12s;
+    animation-delay:3.12s;
+}
+
+#inTurnFadingTextG_22{
+    -moz-animation-delay:3.25s;
+    -webkit-animation-delay:3.25s;
+    -ms-animation-delay:3.25s;
+    -o-animation-delay:3.25s;
+    animation-delay:3.25s;
+}
+
+#inTurnFadingTextG_23{
+    -moz-animation-delay:3.38s;
+    -webkit-animation-delay:3.38s;
+    -ms-animation-delay:3.38s;
+    -o-animation-delay:3.38s;
+    animation-delay:3.38s;
+}
+
+#inTurnFadingTextG_24{
+    -moz-animation-delay:3.51s;
+    -webkit-animation-delay:3.51s;
+    -ms-animation-delay:3.51s;
+    -o-animation-delay:3.51s;
+    animation-delay:3.51s;
+}
+
+#inTurnFadingTextG_25{
+    -moz-animation-delay:3.64s;
+    -webkit-animation-delay:3.64s;
+    -ms-animation-delay:3.64s;
+    -o-animation-delay:3.64s;
+    animation-delay:3.64s;
+}
+
+#inTurnFadingTextG_26{
+    -moz-animation-delay:3.77s;
+    -webkit-animation-delay:3.77s;
+    -ms-animation-delay:3.77s;
+    -o-animation-delay:3.77s;
+    animation-delay:3.77s;
+}
+
+#inTurnFadingTextG_27{
+    -moz-animation-delay:3.9s;
+    -webkit-animation-delay:3.9s;
+    -ms-animation-delay:3.9s;
+    -o-animation-delay:3.9s;
+    animation-delay:3.9s;
+}
+
+#inTurnFadingTextG_28{
+    -moz-animation-delay:4.03s;
+    -webkit-animation-delay:4.03s;
+    -ms-animation-delay:4.03s;
+    -o-animation-delay:4.03s;
+    animation-delay:4.03s;
+}
+
+#inTurnFadingTextG_29{
+    -moz-animation-delay:4.16s;
+    -webkit-animation-delay:4.16s;
+    -ms-animation-delay:4.16s;
+    -o-animation-delay:4.16s;
+    animation-delay:4.16s;
+}
+
+#inTurnFadingTextG_30{
+    -moz-animation-delay:4.29s;
+    -webkit-animation-delay:4.29s;
+    -ms-animation-delay:4.29s;
+    -o-animation-delay:4.29s;
+    animation-delay:4.29s;
+}
+
+#inTurnFadingTextG_31{
+    -moz-animation-delay:4.42s;
+    -webkit-animation-delay:4.42s;
+    -ms-animation-delay:4.42s;
+    -o-animation-delay:4.42s;
+    animation-delay:4.42s;
+}
+
+#inTurnFadingTextG_32{
+    -moz-animation-delay:4.55s;
+    -webkit-animation-delay:4.55s;
+    -ms-animation-delay:4.55s;
+    -o-animation-delay:4.55s;
+    animation-delay:4.55s;
+}
+
+#inTurnFadingTextG_33{
+    -moz-animation-delay:4.68s;
+    -webkit-animation-delay:4.68s;
+    -ms-animation-delay:4.68s;
+    -o-animation-delay:4.68s;
+    animation-delay:4.68s;
+}
+
+#inTurnFadingTextG_34{
+    -moz-animation-delay:4.81s;
+    -webkit-animation-delay:4.81s;
+    -ms-animation-delay:4.81s;
+    -o-animation-delay:4.81s;
+    animation-delay:4.81s;
+}
+
+#inTurnFadingTextG_35{
+    -moz-animation-delay:4.94s;
+    -webkit-animation-delay:4.94s;
+    -ms-animation-delay:4.94s;
+    -o-animation-delay:4.94s;
+    animation-delay:4.94s;
+}
+
+#inTurnFadingTextG_36{
+    -moz-animation-delay:5.07s;
+    -webkit-animation-delay:5.07s;
+    -ms-animation-delay:5.07s;
+    -o-animation-delay:5.07s;
+    animation-delay:5.07s;
+}
+
+@-moz-keyframes bounce_inTurnFadingTextG{
+    0%{
+        color:#000000;
+    }
+
+    100%{
+        color:#FFFFFF;
+    }
+
+}
+
+@-webkit-keyframes bounce_inTurnFadingTextG{
+    0%{
+        color:#000000;
+    }
+
+    100%{
+        color:#FFFFFF;
+    }
+
+}
+
+@-ms-keyframes bounce_inTurnFadingTextG{
+    0%{
+        color:#000000;
+    }
+
+    100%{
+        color:#FFFFFF;
+    }
+
+}
+
+@-o-keyframes bounce_inTurnFadingTextG{
+    0%{
+        color:#000000;
+    }
+
+    100%{
+        color:#FFFFFF;
+    }
+
+}
+
+@keyframes bounce_inTurnFadingTextG{
+    0%{
+        color:#000000;
+    }
+
+    100%{
+        color:#FFFFFF;
+    }
+
+}
+
+/* On search, highlight the matched substring */
+.ui-match { background: yellow; }

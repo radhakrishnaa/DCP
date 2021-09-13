@@ -1,0 +1,54 @@
+
+<div class="error_page" ng-show="error">
+  <h1>Error: <span class="detail">{{errorTitle}}</span>
+    <span class="head_links" ng-switch on="error">
+      <a href="#/{{table}}/list" ng-switch-when="id">&lt; Go to List</a><a href="#/" ng-switch-default>Back to Home</a>
+    </span>
+  </h1>
+  <div class="desc">{{errorDetail}}</div>
+</div>
+
+<div ng-show="!error" ng-class="{submitted:submitted}">
+
+  <h1>
+    Live Settings:
+    <span class="detail">{{choose(extra, extra + '.', '')}}{{hwtype}}.{{carrier}}.{{region}}</span>
+  </h1>
+  <h2>
+    Environment:
+    <select ng-model="envModel" ng-options="env for env in envs" ng-change="envChanged(env)"></select>
+  </h2>
+
+  <form ng-show="state!='loading'" ng-submit="applyAction()">
+
+    <div class="fields">
+      <table>
+        <tbody ng-repeat="(name, value) in liveSettings">
+          <tr>
+            <td class="label">{{name}}</td>
+            <td><div id='{{name}}' class="valdisp">{{value}}</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <span>
+        <a class="cancel" ng-click="goBack()">OK</a>
+      </span>
+    </div>
+
+    <div class="bottomnote" ng-show="mode=='testpublish'">NOTE: Publishing to a test HW type does not mark the config version as published.</div>
+
+  </form>
+
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+
+</div>
+

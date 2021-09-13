@@ -1,0 +1,237 @@
+<h1>Upgrade Paths</h1>
+<div class="well well-small">
+    <div class="row-fluid">
+        <div class="span6 controls control-group controls-row">
+            <label class="span2 control-label" for="searchIcon">Search: </label>
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-search"></i></span><input class="input-xxlarge" id="searchIcon" data-ng-model="pathsearch" type="search" />
+            </div>
+        </div>
+        <div class="span5 controls control-group controls-row">
+            <div>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-arrow-up"></i></span>
+                    <div class="btn-group">
+                        <button id="uploadImportPkg" class="btn dropdown-toggle" data-toggle="dropdown" data-target="#"> Upload/Import a Package <span class="caret"></span> </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><button id="uploadFromComputer" class="btn btn-link" data-ng-init="upload=0" data-ng-click="upload = !upload;jenkins = 0;import = 0">Upload from Your Computer</button></li>
+                            <li><button id="copyJenkinsArtifactory" class="btn btn-link" data-ng-init="jenkins=0" data-ng-click="upload = 0;jenkins =! jenkins;import = 0">Copy from Jenkins/Artifactory</button></li>
+                            <li data-ng-show="false"><button id="importAnotherLoc" class="btn btn-link" data-ng-init="import=0" data-ng-click="upload = 0;jenkins = 0;import = !import">Import from Another Location</button></li>
+                            <li><button id="closeAll" class="btn btn-link" data-ng-click="upload = 0;jenkins = 0;import = 0">Close All</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+     <div class="row-fluid" data-ng-show="upload">
+            <label>Binary (mandatory) and XML (optional) File: </label>
+                  <div class="input-prepend input-append">
+                    <span class="add-on"><i class="icon-file"/></span>
+                    <input type="file" multiple style="width: 39em;" data-files="packageandxml"   /> 
+                  </div>
+                  <br/> <br/>
+                   <div class="span12 controls control-group controls-row" data-ng-show="upload">
+		            <table class="table table-condensed table-hover">
+		                 <thead>
+		                    <tr>
+		                        <th>Name</th>
+		                        <th>Type</th>
+		                        <th>Size</th>
+		                        <th>Last Modified</th> 
+		                    </tr>
+		                </thead>
+		                <tbody>
+		              
+		                    <tr data-ng-repeat="file in packageandxml">
+		                       <td>{{file.name}}</td>
+		                       <td>{{file.type}}</td>
+		                       <td>{{file.size}}</td>
+		                       <td>{{file.lastModifiedDate}}</td>
+		                   </tr>
+		                </tbody>
+		            </table>
+        		 </div> 
+        		 </div>
+   
+                <br/> <br/>
+                <div class="row-fluid">
+                <div class="span6" data-ng-show="upload">
+                <div class="controls control-group controls-row">
+                <div data-ng-controller="UploadController">
+                		
+                <form  class="myForm">
+                     
+                       <table class="table table-condensed" >
+                         
+                       <tr data-ng-repeat="rField in requiredFields" ><td></td>
+                           <td>{{rField.label}} </td>
+	                       <td> 
+	                          <input type="text" style="width: 300px;"  data-ng-model=rField.value  data-ng-trim=false data-ng-required />
+	                           <span class="help-inline">Required</span>
+	                       </td><td></td> 
+                        </tr>
+                        <tr><td></td>
+                        	<td>FingerPrint </td>
+                            <td><input type="text" style="width: 300px;"  data-ng-model="fingerPrint"  data-ng-trim=false />
+                            </td><td></td>
+                        </tr>  
+                        <tr> <td></td>
+			           		 <td colspan="3" class="label-msg text-warning" align="left">
+                		       Following criteria can't be empty but you can delete them.<br/><br/>
+			          		 </td>
+			            </tr>
+                        <tr data-ng-repeat="filter in matchCriteria" ><td></td>
+	                       <td>{{filter.label}} </td>
+	                       <td> 
+	                          <input type="text" style="width: 300px;"  data-ng-model="filter.value"  data-ng-trim=false  data-ng-required/>
+	                       </td>
+	                       <td> 
+	                          <button class="btn" type="button" data-ng-click="deleteMatchCriteria(filter.label)"><i class="icon-trash"/></button>
+	                       </td>
+                        </tr>
+	                    <tr>  <td></td>
+	                        <td align="center" colspan="2" > 
+	                          <div class="input-append" >
+						     	 <select id="myCriteriaList" data-ng-model="myObject.criteria" data-ng-options="c for c in matchCriteriaList">
+                                 </select> 
+	                          <button id="myAddCriteria" class="btn" type="button" data-ng-disabled="!ValidateMatchCriteria(myObject.criteria)" data-ng-click="AddMatchCriteria()" ><i class="icon-plus"/>Add More Criteria</button></div>
+	                           <span class="text-error" data-ng-show="!isValidCriteria(myObject.criteria)">Duplicate Criteria</span>
+	                         </td><td></td>
+	                    </tr>
+                        <tr><td></td>
+	                        <!-- Button to trigger modal -->
+	                       <td colspan="2" align="center" ><span class="add-on"><i class="icon-search"/></span>
+                           <button id="myUploadButton" class="btn" type="button" data-ng-click="uploadfromlocal()" data-ng-disabled="!validPackageAndXML()">Upload</button>
+				           <label>
+                             <input type="checkbox" data-ng-disabled="isReadonly()" data-ng-model="usecds4local"/>
+                              Use GCS? <br/>
+                              Pick a repository to store the package, GCS or Motorola Infrastructure.
+                           </label>	 
+                           </td><td></td>
+                        </tr>
+                       
+                    </table>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   
+    <div class="row-fluid" data-ng-show="jenkins">
+        <div class="span4 controls control-group controls-row">
+            <label class="control-label">ZIP File URL: </label>
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-globe"></i></span> <input id="myFileURL" type="url" data-ng-model="zipFileUrl" class="input-xx-large" placeholder="ZIP File URL" required>
+            </div>
+        </div>
+        <div class="span4 controls control-group controls-row">
+            <label class="control-label">User Name: </label>
+            <div class="input-prepend">
+                <span class="add-on"><i class="icon-user"></i></span> <input id="myUserName" type="text" data-ng-model="userName" class="input-xx-large" placeholder="User Name" required>
+            </div>
+        </div>
+        <div class="span4 controls">
+            <div class="controls control-group controls-row">
+                <label class="control-label">Token or Password: </label>
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-user"></i></span> <input id="myPassword" type="password" data-ng-model="apitoken" class="input-xx-large" placeholder="Jenkins API Token or Motorola Password" required>
+                </div>
+            </div>
+            <div class="control-label">
+         		     <label>
+         		     <input id="myParseCheckbox" type="checkbox" data-ng-model="parseXMLCheckBox" data-ng-click="parsexmlfromJenkinsURL()" /> Check to parse the XML and fill the following form <br/>
+            		 </label>
+            		 <span data-ng-show="!validateJenkinsParseXmlData()"> One of the given value is invalid</span>
+            </div>
+        </div>
+         
+        
+        <div class="span6">
+                 
+                <form  class="myForm">
+                     <table  class="table table-condensed" >
+                       <tr data-ng-repeat="rField in requiredFields" ><td></td>
+                           <td>{{rField.label}} </td>
+	                       <td> 
+	                          <input type="text" style="width: 300px;"  data-ng-model=rField.value  data-ng-trim=false data-ng-required />
+	                          <span class="help-inline">Required</span>
+	                       </td><td></td> 
+                        </tr>
+                        <tr><td></td>
+                        	<td>FingerPrint </td>
+                            <td><input type="text" style="width: 300px;"  data-ng-model="fingerPrintJenkinsUrl"  data-ng-trim=false />
+                            </td><td></td>
+                        </tr>
+                        <tr> <td></td>
+			           		 <td colspan="3" class="label-msg text-warning" align="left">
+                			   Following criteria can't be empty but you can delete them.<br/><br/>
+			          		 </td>
+			       	   </tr>
+                        <tr data-ng-repeat="filter in matchCriteria" ><td></td>
+	                       <td>{{filter.label}} </td>
+	                       <td> 
+	                          <input type="text" style="width: 300px;"  data-ng-model="filter.value"  data-ng-trim=false  data-ng-required/>
+	                       </td>
+	                       <td> 
+	                          <button class="btn" type="button" data-ng-click="deleteMatchCriteria(filter.label)"><i class="icon-trash"/></button>
+	                       </td>
+                        </tr>
+	                    <tr>  <td></td>
+	                        <td align="center" colspan="2" > 
+	                          <div class="input-append" >
+						      <select  data-ng-model="myObject.criteria" data-ng-options="c for c in matchCriteriaList">
+                              </select> 
+	                          <button class="btn" type="button" data-ng-disabled="!ValidateMatchCriteria(myObject.criteria)" data-ng-click="AddMatchCriteria()" ><i class="icon-plus"/>Add More Criteria</button></div>
+	                           <span class="text-error" data-ng-show="!isValidCriteria(myObject.criteria)">Duplicate Criteria</span>
+	                         </td><td></td>
+	                    </tr>
+                    </table>
+                  </form>
+          </div>  
+        
+		      <div class="span6 controls">
+		            <span class="add-on"><i class="icon-search"/></span>	
+		            <button id="uploadBtn" class="btn" type="button" data-ng-click="upload_pkg()" data-ng-disabled="!ParseXmlForm()" data-ng-controller="UploadController">Upload</button>
+		             <label>
+		                <input id="myGCSCheckbox" type="checkbox" data-ng-disabled="isReadonly()" data-ng-model="usecds4jenkins"/>
+		                Use GCS?<br/>
+		                Pick a repository to store the package, GCS or Motorola Infrastructure.
+		            </label>
+		      </div>
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span16">
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr> <th>Source</th> <th>Target</th> <th>Product</th> <th>Region</th> <th>Carrier</th> <th>Language</th> <th>Approval</th> <th>State</th> <th>
+                Package Location </th> </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="path in paths | filter:pathsearch | orderBy:'source'" onclick="document.location.href='#/path/edit/{{path.guid}}'" style="cursor: pointer">
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.sourceVersion | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.targetVersion | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.match.hwType | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.match.region | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.match.carrier | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.match.language | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.approval_state | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.state | highlight:pathsearch"></span></td>
+                    <td><span data-ng-bind-html-unsafe="path.upgradePath.packageStore | highlight:pathsearch"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    <div data-ng-show="waitingAnim" style="width: 600px; margin:0px auto">
+        <video width="100%" height="100%" autoplay="autoplay" loop="true" >
+            <source src="static/ui/app/vid/G.m4v" type="video/m4v">
+            <source src="static/ui/app/vid/G.mp4" type="video/mp4">
+            <source src="https://d8dc6eas4s27i.cloudfront.net/G.webm" type="video/webm">
+            <source src="https://d8dc6eas4s27i.cloudfront.net/G.ogv" type="video/ogg">
+            <img id="videoImg" src="static/ui/app/img/motoanim.jpg"  height="100%" alt="MotoG"/>
+        </video>
+    </div>
+    </div>
+</div>

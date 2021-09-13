@@ -1,0 +1,10 @@
+Do not delete this file from the git repo since it forces
+git to store the parent "publish_out" directory.
+
+Once deployed to the server this file is no longer needed,
+but there is no harm in leaving it around.
+
+If you want to stop the server from logging the current
+and new setting values when publishing, then simply remove
+the entire publish_out directory.
+

@@ -1,0 +1,11 @@
+
+<h1><span class="detail"><small>Cloud Services</small></span><br/>Device Configuration Portal</h1>
+<div class="section home_section" ng-repeat="section in sections">
+  <h3 class="section_head" ng-click="section.hide = !section.hide"><a><span class="head_name">{{section.heading}}</span><span class="more" ng-show="section.hide"> ...</span></a></h3>
+  <ul ng-show="!section.hide">
+    <li ng-repeat="table in section.tables"><a id={{table.name}} href="#/{{tablePath(table)}}/list">{{heading(table)}}</a></li>
+    <li class="invis" ng-show="section.manager && (currUser.manager || currUser.admin)"></li>
+    <li ng-show="currUser.manager || currUser.admin" ng-repeat="link in section.manager"><a href="{{link.route}}">{{link.dispName}}</a></li>
+  </ul>
+</div>
+

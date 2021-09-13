@@ -1,0 +1,153 @@
+<h1>Device Lists</h1>
+<form name="myForm" class="form-inline">
+<div class="well well-large">
+	<div class="controls control-group controls-row">
+		<label class="span1 control-label" for="searchIcon">Search: </label>
+		<div class="span10 controls">
+			<div class="input-prepend">
+				<span class="add-on"><i class="icon-search"></i></span><input
+					class="input-xxlarge" id="searchIcon" data-ng-model="pathsearch"
+					type="search" />
+			</div>
+			<div class="input-prepend" data-ng-show="userCanEdit()">
+				<span class="add-on"><i class="icon-arrow-up"></i></span>
+				<div class="btn-group">
+					<button id="myUploadListDrpdown" class="btn dropdown-toggle" data-toggle="dropdown"
+						data-target="#">
+						Upload a List <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><button id="uploadFromComputer" class="btn btn-link" data-ng-init="upload=1"
+								data-ng-click="upload = !upload">Upload from Your
+								Computer</button></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div class="controls control-group controls-row" collapse="upload" ng-class="{ error: myForm.listNameField.$invalid }">
+		<label class="span1"> Name: </label>
+		<input type="text" class="input-large span3" 
+		  name="listNameField"
+		  data-ng-model="listName"
+		  required 
+		  placeholder="Enter list name here"
+		  />
+	</div> 
+	
+	
+	<div class="controls control-group controls-row" collapse="upload">
+		<label class="span1" data-ng-init="listType='inclusive'">Type: </label>
+		<label class="span2"><input id="myInclusiveBtn" data-ng-model="listType" value="inclusive" type="radio" ng-checked="true" name="listType">&nbsp;inclusive</label>
+		<label class="span2"><input id="myExclusiveBtn" data-ng-model="listType" value="exclusive" type="radio" name="listType" >&nbsp;exclusive</label>
+		<!-- SVCOTA-2700: Disallow adding targeted list to master white list -->
+		<label class="span2" data-ng-show="isSuperuser() && listType == 'exclusive'"><input id="myAddToMasterCheckBox" data-ng-show="isSuperuser()" data-ng-init="addToMasterTarget=false" data-ng-model="addToMasterTarget" value="false" type="checkbox" ng-checked="false" name="addToMasterTarget">&nbsp;Add to Master Blacklist</label>
+	</div>
+
+	<div class="controls control-group controls-row" collapse="upload">
+		<label class="span1">File: </label>
+		<div class="span10 controls">
+			<div class="input-prepend input-append">
+				<span class="add-on"><i class="icon-file"></i></span>
+				<input id="chooseFiles" type="file" valid-File required style="width: 39em;" data-file="devicefile" /> <span
+					class="add-on"><i class="icon-search"></i></span>
+				<!-- Button to trigger modal -->
+				<button id="uploadButton" class="btn" type="button"
+				 data-ng-click="addDeviceList(listName,listType,addToMasterTarget)"
+				 data-ng-disabled="myForm.$invalid">Upload</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+<div>
+	<div class="row-fluid">
+		<div class="span16">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Size</th>
+						<th>Type</th>
+						<th>Member Of</th>
+					</tr>
+				</thead>
+				<tbody	data-ng-repeat="item in lists.lists | filter:pathsearch | orderBy:'Name'"
+						style="cursor: pointer">
+					<tr  data-ng-click="getListSize(item.listid)">
+						<td>{{item.label}}</td>
+						<td>{{item.size}}</td>
+						<td>{{item.matchtype}}</td>
+						<td>{{item.targetNames}}</td>
+						<td>
+							<div class="btn-group" data-ng-show="{{item.mashupComplete}}">
+								<button id="myActionDrpdown" class="btn dropdown-toggle" data-toggle="dropdown"
+									data-target="#">
+									Action<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu pull-right" role="menu">
+									<li><a href="/tlmsdownloadlist/?listid={{item.listid}}">Download</a></li>
+									<li data-ng-show="isSuperuser() && {{item.uiAllowAddToMaster}}"><button id="myAddDeviceListToMaster" class="btn btn-link" data-ng-click="addDeviceListToMaster('{{item.listid}}')">Add list to {{item.uiMasterLabel}}</button></li>
+									<li data-ng-show="isSuperuser() && {{item.uiAllowRemoveFromMaster}}"><button id="myRemoveDeviceListFromMaster" class="btn btn-link" data-ng-click="removeDeviceListFromMaster('{{item.listid}}')">Remove list from {{item.uiMasterLabel}}</button></li>
+									<li data-ng-show="isSuperuser() && {{item.uiAllowRemove}}"><button id="myRemoveList" class="btn btn-link" data-ng-click="removeDeviceList('{{item.listid}}')">Remove List</button></li>
+									<li data-ng-show="isSuperuser()"><button id="myReplaceListEntries" class="btn btn-link"  data-ng-click="showHide(lists.lists,item )"  >Replace List Entries</button></li>								
+								</ul>
+							</div>
+							
+						</td>
+					</tr>
+					<tr >
+					<td colspan=5 style="border: 0;padding:0; margin:0;" align="right">
+					<div  data-ng-show="item.show" style="float: right; ">
+								<div class="input-append">
+									<input type="file" valid-File required 	data-file="item.listEntriesFile" /> 
+									<button class="btn" type="button"data-ng-click="replaceListEntries(item); item.show=!item.show;" ng-disabled="!item.listEntriesFile" >Upload</button>
+									<button class="btn" type="button"data-ng-click="item.show=!item.show;">Cancel</button>
+								</div>
+					         </div>		
+					         </td>
+					         </tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<accordion-group heading="Master Whitelist/Blacklist Test Match">
+	<accordion close-others="0">
+<form name="mySerialForm" class="form-inline">
+		<div class="controls control-group controls-row">
+			<label class="span2">Serial Number (or IMEI):</label>
+			<input type="text" class="input-large span2" 
+			data-ng-model="serialNumber" 
+			required
+			name="serialNumberField"
+			placeholder="Enter serial number"
+			/>
+			<button class="btn span2" type="button" 
+			data-ng-click="matchTest(serialNumber)" 
+			data-ng-disabled="mySerialForm.$invalid">Search for Match</button>
+		</div>
+		<div class="controls control-group controls-row" collapse="preMatchTest">
+			<label class="span2">Member of:</label>
+			<label class="span2">{{matchFoundInList}}</label>
+		</div>
+</form>
+	</accordion>
+</accordion-group>
+
+<accordion-group heading="Debug">
+	<accordion close-others="0">
+		<h2>Display Lists</h2>
+		    <pre>{{lists | json}}</pre>
+		<h2>Retrieved Lists</h2>
+		    <pre>{{retrievedLists | json}}</pre>
+		<h2>Retrieved Targets</h2>
+		    <pre>{{targets | json}}</pre>
+		<h2>Match</h2>
+		    <pre>{{match | json}}</pre>
+		<h2>User</h2>
+		    <pre>{{user | json}}</pre>
+	</accordion>
+</accordion-group>
+

@@ -1,0 +1,915 @@
+html * {
+  margin: 0;
+  border-spacing: 0;
+  box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+body, button, input, select, table, td {
+  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #333333;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin: 12px 0 6px 0;
+}
+
+ul {
+  margin: 4px 0 6px 0;
+}
+
+input:required, select:required {
+  box-shadow: none;
+}
+
+/*
+If input is invalid and dirty and form is submitted with invlid data, show red line.
+*/
+input:required.ng-invalid.ng-dirty,
+select:required.ng-invalid.ng-dirty,
+.submitted input:required.ng-invalid,
+.submitted select:required.ng-invalid
+{
+  box-shadow: 0 0 0 1px rgba(176,32,32,0.2) inset;
+  border-color: #d84040;
+}
+
+a {
+  color: #3074c4;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #0098ff;
+}
+
+.hide {
+  display: none;
+}
+
+.header, .logo {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  height: 3.857em;
+  width: 100%;
+  overflow: hidden;
+}
+
+.header {
+  background: #4b494c;
+}
+
+.logo {
+  background-image: url(../images/moto_logo_light_38px.png);
+  background-repeat: no-repeat;
+  background-position: 7px 8px;
+}
+
+.main {
+  padding: 0 8px 32px;
+  margin-bottom: 10em;
+}
+
+/* Remove button padding in FF */
+input::-moz-focus-inner, button::-moz-focus-inner {
+	border: 0;
+	padding: 0;
+}
+
+input[type=text], select {
+  margin: 2px 4px;
+  padding: 4px;
+  padding: 5px 3px 5px 4px;
+  border: 1px solid #d0d0d0;
+  border-radius: 3px;
+  background: #ffffff;
+  box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+form .fields input[type=text], form .fields select {
+  margin: 2px 3px;
+}
+
+select {
+  padding: 4px 4px 4px 1px;
+}
+
+input[readonly] {
+  background: #f8f8f8;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0.5em 0 0.25em 0;
+  display: block;
+  color: #505050;
+  font-weight: normal;
+}
+
+h1, h2 {
+  margin: 0.5em 0 0.25em 0;
+  color: #bb1b1b;
+  display: block;
+}
+
+.detail {
+  font-weight: normal;
+  color: #808080;
+}
+
+.head_links {
+  color: #333333;
+  margin-left: 16px;
+  font-size: 14px;
+}
+
+.head_links select {
+  margin: -1px 4px;
+  padding: 2px 3px 1px 1px;
+  background: transparent;
+}
+
+.head_links a {
+  margin-left: 1.5em;
+  white-space: nowrap;
+}
+
+/*
+h1 .head_links {
+  display: block;
+  background: #f0f0f0;
+  margin: 4px 0;
+}
+
+h1 .head_links a {
+  display: inline-block;
+  border-right: 1px solid #ffffff;
+  margin: 0;
+  padding: 2px 1em;
+}
+
+h1 .head_links .spaceholder {
+  display: inline-block;
+  padding: 2px 1em;
+}
+*/
+
+.sitename {
+  text-align: right;
+  padding: 7px 12px 0;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.env {
+  background: #d43030;
+  color: #ffffff;
+}
+
+.nav {
+  text-align: right;
+  font-size: 13px;
+  padding: 3px 12px 0;
+  color: #888888;
+}
+
+.nav a {
+  color: #66bbff;
+}
+.nav a:hover {
+  color: #70d4ff;
+}
+
+.loginname {
+  color: #bbbbbb;
+}
+
+.section_head {
+  background: #ececec;
+  padding: 2px 6px 5px;
+  border-top: 2px solid #c0c0c0;
+  color: #b01b1b;
+}
+
+h3.section_head {
+  padding: 2px 6px 3px;
+}
+
+.section {
+  margin-top: 1.5em;
+}
+
+.section.cfg_settings {
+  margin-top: 0;
+}
+
+.home_section .section_head > a {
+  display: block;
+}
+
+.home_section .head_name {
+  color: #505050;
+}
+
+.fields {
+  margin: 0.5em 0;
+}
+
+form .fields {
+  margin-top: 1.25em;
+}
+
+form .fields table {
+  margin: 0;
+  display: inline-block;
+  text-align: right;
+  padding-left: 1em;
+}
+
+
+form .fields td {
+  text-align: right;
+  white-space: nowrap;
+  padding: 1px;
+}
+
+form .fields td input[type=checkbox] {
+  display: inline-block;
+  vertical-align: -2px;
+  margin-left: 3px;
+}
+
+form .fields td input[type=text], form .fields td select {
+  width: 40em;
+}
+
+.valdisp {
+  width: 40em;
+  margin: 2px 3px;
+  padding: 6px 6px 6px 5px;
+  border-left: 1px solid #bbbbbb;
+  background: #f2f2f2;
+  text-align: left;
+  min-height: 16px;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.valdisp.changed {
+  border-left: 1px solid #e0b090;
+  background: #f8f0c0;
+}
+
+.fields .tag {
+  color: #909090;
+  padding: 5px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.fields .tag .specific {
+  color: #bb1b1b;
+}
+
+.desc > div {
+  max-width: 70em;
+  display: inline-block;
+  position: relative;
+}
+
+.topwarn {
+  background: #ffee99;
+  color: #600000;
+  padding: 2px 6px;
+}
+
+.status {
+  position: fixed;
+  top: 4px;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+
+.status div {
+  display: inline-block;
+  background: #ffee99;
+  color: #554433;
+  padding: 2px 6px;
+  border: 1px solid #bbaa55;
+  pointer-events: auto;
+}
+
+.status.error div {
+  xbackground: #dd0000;
+  color: #ffffff;
+  border: 1px solid #880000;
+  color: #dd0000;
+  border: 1px solid #ee0000;
+  xborder-width: 1px 4px;
+  xfont-weight: bold;
+  pointer-events: auto;
+}
+
+.note {
+  margin-top: 6px;
+}
+
+.note > div {
+  color: #583820;
+  background: #fcecb0;
+  border: 1px solid #b8a870;
+  border-radius: 4px;
+  padding: 0.5em 1.5em 0.5em 0.5em;
+  font-size: 95%;
+  max-width: 70em;
+  display: inline-block;
+  position: relative;
+}
+
+.note .close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0px 4px;
+  cursor: pointer;
+  color: #b8a870;
+}
+
+.note .close:hover {
+  color: #bb1b1b;
+}
+
+.actions {
+  margin-top: 1em;
+}
+
+button, .actions input, .actions a, .actions a:hover {
+  border-radius: 3px;
+  display: inline-block;
+  background: #bb1b1b;
+  border: 1px solid #555555;
+  padding: 4px 6px;
+  margin: 2px;
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;  /* highlight top edge */
+  cursor: pointer;
+  outline-width: 0;
+}
+
+button:active, .actions input:active, .actions a:active, .actions a:hover:active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4) inset;  /* inset shadow */
+}
+
+button.primary, .actions input.primary, .actions a.primary, .actions a:hover.primary {
+  font-weight: bold;
+}
+
+button.warn, .actions input.warn, .actions a.warn, .actions a:hover.warn {
+}
+
+button.cancel, .actions input.cancel, .actions a.cancel, .actions a:hover.cancel {
+  background: #d0d0d0;
+  color: #333333;
+  border-color: #aaaaaa;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;  /* highlight top edge */
+}
+
+button.cancel:active, .actions input.cancel:active, .actions a.cancel:active {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset,  /* inset shadow */
+              0 1px 1px rgba(0,0,0,0.2) inset;
+}
+
+button:focus, .actions input:focus, .actions a:focus {
+  text-decoration: underline;
+}
+
+button:hover, .actions input:hover, .actions a:hover,
+button:active, .actions input:active, .actions a:active {
+  text-decoration: none;
+}
+
+.null_option {
+  color: #999999;
+}
+
+table.list {
+  margin-top: 8px;
+}
+
+table.list td {
+  padding: 2px 16px 2px 8px;
+  border: 1px solid #ffffff;
+  border-left-width: 0px;
+}
+
+table.list thead tr td {
+  padding: 4px 16px 4px 8px;
+  background: #555555;
+  color: #ffffff;
+  border-right-color: #f0f0f0;
+  border-top-width: 0;
+}
+
+table.list tbody tr td {
+  background: #f4f4f4;
+  border-color: #f8f8f8;
+  border-right-color: #ffffff;
+}
+
+table.list tbody tr:nth-child(2n+1) td {
+  background: #ececec;
+  border-color: #e8e8e8;
+  border-right-color: #fafafa;
+}
+
+table.list tbody tr td.diff {
+  background: #f4ecb8;
+  border-color: #f8f0c8;
+  border-right-color: #ffffff;
+}
+
+table.list tbody tr:nth-child(2n+1) td.diff {
+  background: #f0e7b8;
+  border-color: #ece3b4;
+  border-right-color: #fafafa;
+}
+
+.altshow, .filter_out {
+   display: none;
+}
+
+.fields {
+  display: table;
+}
+
+.field {
+  height: 2em;
+  display: table-row;
+}
+
+.field .label {
+  vertical-align: middle;
+  padding-right: 0.25em;
+}
+
+.field .valinput {
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ng-cloak {
+  display: none
+}
+
+.nullval {
+  color: #a0a0a0;
+}
+
+input[readonly], select[disabled] {
+  background: #f0f0f0;
+}
+
+.view .valinput input, .view .valinput select {
+  background: #f2f2f2;
+  border-color: #f2f2f2;
+  padding: 6px 4px 6px 4px;
+  border: 0;
+  border-left: 1px solid #bbbbbb;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin-right: 0;
+}
+
+.view .valinput select {
+  padding: 5px 5px 5px 1px;
+}
+
+.view .link a {
+  margin: 0;
+  display: inline-block;
+  padding: 6px 5px;
+}
+
+.no_entries {
+  font-style: italic;
+  color: #808080;
+  padding-left: 0.25em;
+}
+
+.wait_anim {
+  padding: 2px 12px;
+}
+
+table.list td.cell_link {
+  padding: 0;
+  overflow: hidden;
+  width: 2.25em;
+}
+
+.cell_link div {
+  height: 0;
+  position: relative;
+}
+
+.cell_link a {
+  padding: 0 2em 0 0.5em;
+  font-weight: bold;
+  font-size: 15px;
+  position: absolute;
+  top: -100px;
+  vertical-align: middle;
+  line-height: 200px;
+  color: #4088d0;
+}
+
+table.clicklist tbody tr:hover td {
+  background: #d0e8f0;
+}
+
+table.list tbody tr:hover td.cell_link a {
+  background: #80d0e8;
+  color: #ffffff;
+}
+
+table.list tbody tr td.cell_link a:hover, .view .link a:hover {
+  background: #70a0d0;
+  color: #ffffff;
+}
+
+h1 .head_links a.warn:hover {
+  /* background: #c03030; */
+  color: #c00000;
+}
+
+.tmpval {
+  color: #a0a0a0;
+}
+
+li {
+  padding: 2px 0;
+}
+
+.error_note {
+  white-space: pre-wrap;
+}
+
+.status_area {
+  border: 1px solid #a09080;
+  border-radius: 3px;
+  padding: 4px;
+  background: #f2f0d8;
+}
+
+.error_status_area {
+  border-color: #bb1b1b;
+  background: #f4f0d4;
+}
+
+.status_area h2 {
+  margin-top: 0;
+}
+
+.success_status_area h2 {
+  color: #6c7850;
+}
+
+.status_body {
+  margin-bottom: 6px;
+}
+
+.status_desc {
+  margin: 6px 0px;
+}
+
+.status_note {
+  white-space: pre-wrap;
+}
+
+.status_area.blip {
+  background: #ffee99;
+  background: #fff8d0;
+}
+
+.invis {
+  visibility: hidden;
+}
+
+form .fields tr .ckbox.lock input[type=checkbox] {
+  display: none;
+}
+
+form .fields tr .ckbox.lock {
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+  color: #b0b0b0;
+}
+
+form .fields tr .ckbox.lock.on {
+  color: #505050;
+}
+
+form .fields tr .ckbox.lock:after {
+  content:"-";
+}
+
+form .fields tr .ckbox.lock.on:after {
+  content:"X";
+}
+
+h1 .back {
+  display: none;
+}
+/*
+h1 {
+  background: #f8f8f8;
+}
+
+h1 .back {
+  display: inline-block;
+  padding: 0 1px 2px;
+  position: relative;
+  background: #b0b0b0;
+  color: #ffffff;
+}
+
+.back span:first-child {
+  visibility: hidden;
+}
+
+.back span:first-child:after {
+  content: "<";
+}
+
+.back span:last-child {
+  position: absolute;
+  font-size: 17px;
+  bottom: 7px;
+  right: 4px;
+}
+*/
+
+.version_info, .comment_view {
+  display: inline-block;
+  padding: 0; /*We are overriding the default padding to force to 0.*/
+  margin: 0;
+}
+
+.version_info li, .comment_view li {
+  display: inline-block;
+  background: #ececec;
+  padding: 2px 12px;
+  margin: 0 2px 2px 0;
+  color: #606060;
+}
+
+.helptext, .helpname {
+  text-align: left;
+  width: 40em;
+  white-space: normal;
+  margin: -3px 3px 2px;
+  padding: 3px 6px 3px 5px;
+  border-left: 1px solid #c8c0a8;
+  background: #f4f2e0;
+}
+.helpname {
+  color: #a05050;
+}
+.helpname .label {
+  color: #909090;
+}
+
+.override_check {
+  padding-left: 2px;
+  text-align: center;
+}
+
+.helplnk {
+  padding-left: 2px;
+}
+
+.nohelp {
+  font-style: italic;
+  color: #606060;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.option_area {
+  padding: 0.75em 0.5em 0.5em;
+  background: #f4f0d4;
+  color: #444444;
+}
+
+.testscope {
+  margin: -0.25em 0 1.5em 0;
+}
+
+.pgate_opts {
+  margin: 1.5em 0 1em 0;
+}
+
+.option_area .instruct, .itemdesc {
+  margin-bottom: 0.75em;
+  max-width: 70em;
+}
+
+.option_area > div > * {
+  margin-right: 0.5em;
+}
+
+.option_line {
+  font-size: 16px;
+  min-height: 1.5em;
+}
+
+.testhw input[type=text] {
+  width: 7em;
+}
+
+.testhw .hwname {
+  color: #bb1b1b;
+}
+
+.checkbox_line {
+  min-height: 1.4em;
+}
+
+form .fields td .checkbox_line input[type=checkbox] {
+  vertical-align: -3px;
+  margin-right: 0.5em;
+}
+
+.bottomnote {
+  color: #707070;
+  margin: 0.5em 0.2em;
+}
+
+tr.fieldgrp td > div {
+  border-bottom: 1px solid #e0e0e0;
+  color: #707070;
+  color: #a08050;
+  color: #bb1b1b;
+  color: #909090;
+  font-size: 16px;
+  margin: 8px 0 2px;
+  padding: 2px 6px 0;
+  text-align: left;
+  /* This works around some font alignment differences in Firefox and Chrome. */
+  line-height: 20.99999px;
+}
+
+tr.fieldgrp td > div > div {
+  margin-bottom: -4px;
+}
+
+div.result {
+  white-space: pre-wrap;
+}
+
+.more_new {
+  margin-top: 1em;
+  padding-left: 2px;
+  color: #505050;
+}
+
+input.checkbox_align {
+  vertical-align: -2px;
+}
+
+.multicheck > div {
+  border-left: 1px solid #d0d0d0;
+  margin: 3px 3px;
+}
+
+.disable_url {
+  pointer-events: none;
+  color: #c0c0c0;
+}
+
+.pagination a {
+  margin: 0 1px;
+}
+
+.pagination a.curr_page {
+  pointer-events: none;
+  color: #ffffff;
+  font-weight: bold;
+  background: #808080;
+  padding: 3px;
+}
+
+.pagination .per_page {
+  margin-left: 2em;
+}
+
+.page_gap {
+  color: #808080;
+}
+
+table.list tr.hdr_names td {
+  border-bottom: none;
+}
+
+table.list tr.hdr_filters td {
+  padding: 0 10px 1px 6px;
+}
+
+input.col_filter {
+  border-radius: 2px;
+  border-width: 0px;
+  width: 4em;
+  min-width: 100%;
+  padding: 2px;
+  margin: 1px 1px 4px 0;
+  box-shadow: 0 1px 0px 1px rgba(0,0,0,0.2) inset,
+    0 0 0px 2px rgba(0,0,0,0.1) inset;
+}
+
+table.list td.filter_apply input {
+  margin: -1px 3px 2px 0;
+}
+
+table.list td.filter_apply {
+  padding: 0 0 0 2px;
+  background: none;
+  border-right: none;
+}
+
+
+.comment {
+  margin: 0 4px 2px 0;
+  color: #606060;
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  display: inline-block;
+}
+
+.comment_edit input {
+	width: 60em;
+}
+
+.comment_label {
+	color: #909090;
+}
+
+bulk_field {
+    width: 60em;
+}
+
+.settingValue input[type=text] {
+    width: 35em;
+}
+
+/*
+.warn_setting_mismatch {
+    color: #bb1b1b;
+    width: 60em;
+    margin: 2px 3px;
+    padding: 6px 6px 6px 5px;
+    border-left: 1px solid #bbbbbb;
+    background: #f2f2f2;
+    text-align: left;
+    min-height: 16px;
+    vertical-align: middle;
+    word-wrap: break-word;
+    white-space: normal;
+}
+*/
+
+.warn_setting_mismatch {
+    color: #bb1b1b
+}
+.warn_setting_mismatch_values {
+    color: #bb1b1b;
+    width: 60em;
+    margin: 2px 3px;
+    padding: 6px 6px 6px 5px;
+    border-left: 1px solid #bbbbbb;
+    background: #f2f2f2;
+    text-align: left;
+    min-height: 16px;
+    vertical-align: middle;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+div.settings {
+  margin-top: 20px;
+}

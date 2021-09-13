@@ -1,0 +1,80 @@
+
+
+  <div class="section cfg_settings" ng-show="versions">
+    <h2 class="section_head">Settings
+      <span class="head_links">
+      Version:
+      <select ng-model="vars.verId" ng-change="verChanged()"
+          ng-options="v.id as tableDefs['config_version'].versionName(v) for v in versions">
+      </select>
+      <span class="filtered">
+        <a class="ver_edit" ng-show="hasRole('editor') && ver(vars.verId) == versions[0]"
+            href="#/{{table}}/settings/{{item.id}}">Edit</a>
+        <a class="ver_edit" ng-show="hasRole('editor') && ver(vars.verId) == versions[1]"
+            ng-click="editFresh()">Edit</a>
+        <a class="ver_commit" ng-show="hasRole('editor') && !ver(vars.verId).committed"
+            href="#/{{table}}/commit/{{item.id}}">Commit</a>
+        <a class="ver_discard" ng-show="hasRole('editor') && !ver(vars.verId).committed && ver(vars.verId).last_edited"
+            ng-click="discardSettings()">Discard</a>
+        <a class="ver_approve" ng-show="hasRole('approver') && ver(vars.verId).committed && !ver(vars.verId).approved"
+            href="#/{{table}}/approve/{{item.id}}?vnum={{ver(vars.verId).version_number}}">Approve</a>
+        <a class="ver_publish" ng-show="hasRole('publisher') && verComplies( ver(vars.verId), 'approved', 'published' )"
+            href="#/{{table}}/publish/{{item.id}}?vnum={{ver(vars.verId).version_number}}">Publish</a>
+        <a class="ver_republish" ng-show="hasRole('publisher') && verComplies( ver(vars.verId), 'published', 'published', true )"
+            href="#/{{table}}/publish/{{item.id}}?vnum={{ver(vars.verId).version_number}}">Re-Publish</a>
+        <a class="ver_publish" ng-show="hasRole('publisher') && verComplies( ver(vars.verId), 'published', 'approved', true )"
+            href="#/{{table}}/revert/{{item.id}}?vnum={{ver(vars.verId).version_number}}">Revert</a>
+        <a class="ver_testpublish" ng-show="tableDef.canPublish && hasRole('editor') && ver(vars.verId).committed"
+            href="#/{{table}}/testpublish/{{item.id}}?vnum={{ver(vars.verId).version_number}}">Publish for Test</a>
+        <a class="ver_propagate" ng-show="currUser.admin && ver(vars.verId).committed"
+            href="#/{{table}}/propagate/{{item.id}}?vnum={{ver(vars.verId).version_number}}">Propagate</a>
+        <!--a ng-show="ver(vnum).committed" href="">Send to Test Devices</a-->
+      </span>
+      </span>
+    </h2>
+    <ul class="version_info">
+      <li ng-show="!ver(vars.verId).committed">Working Version</li>
+      <li ng-show="ver(vars.verId).committed">Version {{ver(vars.verId).version_number}}</li>
+      <li ng-show="cfgData.fallback">Based on {{tableDefs.config_set.itemName(cfgData.fallback,true)}} Version {{cfgData.fallback.version_number}}.</li>
+      <li ng-show="!ver(vars.verId).committed && !ver(vars.verId).last_edited && !ver(vars.verId).parentChanged">No edits since last commit.</li>
+      <li ng-show="!ver(vars.verId).committed && !ver(vars.verId).last_edited && ver(vars.verId).parentChanged">Parent changed since last commit.</li>
+      <li ng-show="!ver(vars.verId).committed && ver(vars.verId).last_edited">Last edited {{ver(vars.verId).last_edited}} by {{ver(vars.verId).last_editor}}.</li>
+      <li ng-show="ver(vars.verId).committed">Committed {{ver(vars.verId).committed}} by {{ver(vars.verId).committer}}.</li>
+      <li ng-show="ver(vars.verId).approved">Approved {{ver(vars.verId).approved}} by {{ver(vars.verId).approver}}.</li>
+      <li ng-show="ver(vars.verId).published">Published {{ver(vars.verId).published}} by {{ver(vars.verId).publisher}}.</li>
+    </ul>
+    <form>
+
+    <ul class="comment_view">
+    <li><span class="comment_label">Comment: </span><span>{{cfgData.comment}}</span></li>
+    </ul>
+
+    <div class="fields" ng-show="vars.verId && settingDefs && cfgData">
+      <table>
+        <tbody ng-repeat="setDef in settingDefs" data-name="{{formatAsName(setDef.name)}}">
+          <tr class="fieldgrp" ng-show="setDef.group != settingDefs[$index-1].group"><td colspan="3"><div><div>{{setDef.group}}</div></div></td></tr>
+          <tr>
+            <td class="label">{{setDef.display_name}} <a class="helplnk" ng-click="help[setDef.name] = !help[setDef.name]">?</a></td>
+            <td>
+                <div class="valdisp">
+                    <span id="{{setDef.name}}" class="val">{{getSettingVal(setDef.name)}}</span>
+                    <span ng-show="blankRegex.test(getSettingVal(setDef.name)||'')">&nbsp;</span>
+                </div>
+            </td>
+            <td class="tag" ng-switch on="settingLevel(setDef.name)">
+              <span ng-switch-when="1">from {{getSettingSrc(setDef.name)}}</span>
+              <span ng-switch-when="2" class="specific">{{getSettingSrc(setDef.name)}} specific</span>
+              <span ng-switch-when="-1">(no value)</span>
+            </td>
+          </tr>
+          <tr ng-show="help[setDef.name]">
+            <td></td>
+            <td class="helppanel"><div class="helptext" ng-show="setDef.short_help">{{setDef.short_help}}</div><div class="helpname"><span class="label">Full Name: </span>{{setDef.name}}</div></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+

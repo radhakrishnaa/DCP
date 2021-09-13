@@ -1,0 +1,176 @@
+<div ng-show="error">
+  <h1>Error: <span class="detail">{{errorTitle}}</span>
+        <span class="head_links">
+            <a href="#/">Back to Home</a>
+        </span>
+    </h1>
+  <div class="desc">{{errorDetail}}</div>
+</div>
+
+<div ng-show="!error">
+  <form ng-submit="applyFilter()">
+    <table class="list clicklist">
+      <thead>
+        <div class="settingCategory">
+          <select ng-model="categorySelected" ng-options="category.name as category.name for category in settingCategories" ng-change="categoryChanged(categorySelected.name)">
+          </select>
+        </div>
+        <tr class="hdr_names">
+          <td>&nbsp;</td>
+          <td ng-repeat="field in tableDef.fieldList" ng-show="field.showFor('view','list')">{{field.disp}}</td>
+        </tr>
+        <tr class="hdr_filters">
+          <td></td>
+          <td ng-repeat="field in tableDef.fieldList" ng-show="field.showFor('view','list')">
+            <input id="{{field.name}}" type="text" class="col_filter" ng-model="colFilters[field.name]" ng-show="filterKey(field.name)"
+            />
+          </td>
+          <td class="filter_apply actions">
+            <input id="btn_search" class="cancel" type="submit" name="filter" value="Search" onclick="this.blur()" />
+            <input id="btn_cancel_filter" class="cancel" type="button" name="clear" value="X" ng-click="clearFilter()" />
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="item in items">
+          <td>
+          </td>
+          <td ng-repeat="field in tableDef.fieldList" ng-show="field.showFor('view','list')">
+            <span ng-switch on="item[field.name]==null">
+                            <span ng-switch-when="true" class='nullval'>(none)</span>
+            <span class="bulk_field" ng-switch-default>
+                                <span ng-repeat="part in splitVal(item._dispVals[field.name])">{{part}}<wbr/></span></span>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+<div ng-show="!error && mode=='bulkupdate'" ng-class="{submitted:submitted}">
+  <form ng-show="state!='loading'" ng-submit="applyUpdate()">
+    <div class="settings" ng-show="mode=='bulkupdate'">
+      <table>
+        <tbody>
+          <tr>
+            <th>Setting Name</th>
+            <th>Edit</th>
+            <th>Existing Value</th>
+            <th>New Value</th>
+            <th>Remove</th>
+          </tr>
+          <tr ng-repeat="setting in settingDefs">
+            <td>
+              <div class="settingName">{{setting.name}}</div>
+            </td>
+            <td class="override_check">
+              <input type="checkbox" ng-model="settingPicks[setting.name]" />
+            </td>
+            <td>
+              <div class="settingValue">
+                <input id="{{setting.name}}_existingValue" type="text" ng-model="existingValue[setting.name]" ng-change="valueChanged(setting.name)"
+                />
+              </div>
+            </td>
+            <td>
+              <div class="settingValue">
+                <input id="{{setting.name}}_newValue" type="text" ng-model="updatedValue[setting.name]" ng-change="valueChanged(setting.name)"
+                ng-show="!removeValue[setting.name]" />
+              </div>
+            </td>
+            <td class="override_check">
+              <input type="checkbox" ng-model="removeValue[setting.name]" ng-change="valueChanged(setting.name)" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pgate_opts option_area" ng-show="mode=='bulkupdate'">
+      <div class="instruct">The above settings will be applied on all the checked Device types above.</div>
+      <div class="pgate_commit option_line">
+        <input type="checkbox" ng-model="commit_enabled"><span class="label">Commit</span>
+      </div>
+      <div class="pgate_approve option_line">
+        <input type="checkbox" ng-model="approve_enabled"><span class="label">Approve</span>
+      </div>
+      <div class="pgate_cloud option_line" ng-repeat="cloud in cloud_list">
+        <input type="checkbox" ng-model="cloud_choices[cloud.short_name]"><span class="label">Publish to {{cloud.short_name}}</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <span>
+        <input name="apply" type="submit" value="{{verb}}" onclick="this.blur(); setSubmitted(this,1)"/>
+        <a class="cancel" href="#/{{table}}/view/{{item.id}}" onclick="this.blur(); setTmpItem({{item}})">Cancel</a>
+      </span>
+    </div>
+
+    <div class="bottomnote" ng-show="mode=='testpublish'">NOTE: Publishing for testing does not mark the config version as published.</div>
+
+  </form>
+  <div class="actions">
+    <button ng-click="importCheckinSettings()">Import</button>
+  </div>
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div class="pgate_result" ng-show="mode=='bulkupdate' && result">
+    <h2>Update Issues</h2>
+    <table class="list">
+      <thead>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Config Set</td>
+          <td>Version</td>
+          <td>Problem</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="error in result.errors">
+          <td class="cell_link">
+            <div><a target="_blank" href="#/cfg_devicetype/view/{{error.item.id}}" onclick="setTmpItem({{error.item}})">&gt;</a>&nbsp;</div>
+          </td>
+          <td>{{tableDefs.config_set.itemName(error.item, true)}}</td>
+          <td>{{error.item.version_number}}</td>
+          <td>{{error.data}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-show="result.errors.length==0" class="no_entries">no issues found</div>
+
+    <br/>
+    <h2>Updates Performed</h2>
+    <table class="list">
+      <thead>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Config Set</td>
+          <td>Version</td>
+          <td>Edited</td>
+          <td>Commited</td>
+          <td>Approved</td>
+          <td>Published to</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="update in result.updates">
+          <td class="cell_link">
+            <div><a target="_blank" href="#/cfg_devicetype/view/{{update.item.id}}" onclick="setTmpItem({{update.item}})">&gt;</a>&nbsp;</div>
+          </td>
+          <td id="{{tableDefs.config_set.itemName(update.item, true)}}">{{tableDefs.config_set.itemName(update.item, true)}}</td>
+          <td id="result_version">{{update.item.version_number}}</td>
+          <td id="result_edited">{{choose(update.data.edited,'X','')}}</td>
+          <td id="result_commit">{{choose(update.data.commit,'X','')}}</td>
+          <td id="result_approve">{{choose(update.data.approve,'X','')}}</td>
+          <td id="result_publish">{{update.data.publish.join(', ')}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-show="result.updates.length==0" class="no_entries">no updates performed</div>
+  </div>
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+</div>

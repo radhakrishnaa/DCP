@@ -1,0 +1,74 @@
+
+<div class="error_page" ng-show="error">
+  <h1>Error: <span class="detail">{{errorTitle}}</span>
+    <span class="head_links" ng-switch on="error">
+      <a href="#/{{table}}/list" ng-switch-when="id">&lt; Go to List</a><a href="#/" ng-switch-default>Back to Home</a>
+    </span>
+  </h1>
+  <div class="desc">{{errorDetail}}</div>
+</div>
+
+<div ng-show="!error" ng-class="{submitted:submitted}">
+
+  <h1>Edit Settings for: <span class="detail">{{itemName}}</span>
+    <span class="head_links"><span class="spaceholder">&nbsp;</span></span>
+    </h1>
+
+  <form ng-show="state!='loading'" ng-submit="saveSettings()">
+  <span class="comment">Comment: </span><span class="comment_edit"><input type="text" ng-model="cfgData.comment"></input></span>
+
+    <div class="fields">
+      <table>
+        <tbody ng-repeat="setDef in settingDefs" data-name="{{formatAsName(setDef.name)}}">
+          <tr class="fieldgrp" ng-show="setDef.group != settingDefs[$index-1].group"><td colspan="4"><div><div>{{setDef.group}}</div></div></td></tr>
+          <tr>
+            <td class="label">{{setDef.display_name}} <a class="helplnk" ng-click="help[setDef.name] = !help[setDef.name]"> ?</a></td>
+            <td class="override_check"><input type="checkbox" ng-model="editPicks[setDef.name]" ng-change="pickChanged(setDef.name)"/></td>
+            <td class="valinput" ng-switch on="setDef.datatype">
+              <div ng-switch-when="bool">
+                <select ng-model="editVals[setDef.name]" ng-change="valChanged(setDef.name)"
+                    ng-options="val for val in ['on','off']">
+                </select>
+              </div>
+              <div ng-switch-default><input id="{{setDef.name}}" type="text" ng-model="editVals[setDef.name]" ng-change="valChanged(setDef.name)"/></div>
+            </td>
+            <td class="tag" ng-switch on="settingLevel(setDef.name)">
+              <div ng-switch-when="1">from {{getSettingSrc(setDef.name)}}</div>
+              <div class="specific" ng-switch-when="2">{{getSettingSrc(setDef.name)}} specific</div>
+              <div ng-switch-when="-1">(no value)</div>
+            </td>
+          </tr><tr ng-show="help[setDef.name]">
+            <td></td>
+            <td></td>
+            <td class="helppanel"><div class="helptext" ng-show="setDef.short_help">{{setDef.short_help}}<span class="nohelp" ng-hide="setDef.short_help">no description</span></div><div class="helpname"><span class="label">Full Name: </span>{{setDef.name}}</div></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="actions">
+      <span>
+        <input type="submit" name="apply" value="Apply" onclick="this.blur()"/>
+        <a class="cancel" href="#/{{table}}/view/{{item.id}}" onclick="this.blur(); setTmpItem({{item}})">Cancel</a>
+      </span>
+    </div>
+  </form>
+  
+<!--    <div class="actions" ng-show="showImportButton(itemName, table)" >
+ -->
+    <div class="actions" ng-show="itemName.indexOf('Checkin') > 0 && cfgtable == 'delta'">
+       <button ng-click="importCheckinSettings(itemName)">Import</button>
+   </div>
+   
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+
+</div>
+
+

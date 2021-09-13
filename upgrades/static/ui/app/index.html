@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" data-ng-app="upgrades">
+    <head>
+        <title>Self Service Portal (for upgrades, lists, settings, etc.)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
+
+        <link rel="stylesheet" type="text/css" href="http://angular-ui.github.com/ng-grid/css/ng-grid.css" />
+        <link rel="stylesheet" type="text/css" href="static/ui/app/css/app.css" />
+        <link rel="stylesheet" href="static/ui/app/lib/angular/angular-ui.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
+        <!-- Twitter Bootstrap CSS -->
+        <link rel="stylesheet" media="screen" href="static/ui/app/lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="static/ui/app/css/datetimepicker.css" />
+        
+    </head>
+    <body data-ng-controller="RootController" class="container-fluid">
+	    <!-- Part 1: Wrap all page content here -->
+	    <div id="wrap">
+
+		    <!-- Fixed navbar -->
+		    <div class="navbar">
+			    <div class="navbar-inner">
+				    <img class="brand" src="static/ui/app/img/app_logo.png"
+					     onclick="document.location.href='#/'" style="cursor: pointer;">
+				    <ul class="nav">
+					    <li data-ng-show="showTab('paths')" data-ng-class="{active: isActive('paths')}"><a href="#/paths">Upgrades</a></li>
+					    <li data-ng-show="showTab('settings')"><a href="#">Settings</a></li>
+					    <li data-ng-show="showTab('events')" data-ng-class="{active: isActive('events')}"><a href="#/events">Upgrade Logs</a></li>
+					    <li data-ng-show="showTab('deviceinfo')" data-ng-class="{active: isActive('deviceinfo')}"><a href="#/deviceinfo">Device Info</a></li>
+					    <li data-ng-show="showTab('mapreports')" data-ng-class="{active: isActive('mapreports')}"><a href="#/mapreports">MAP Reports</a></li>
+					    <li data-ng-show="showTab('lists')" data-ng-class="{active: isActive('lists')}"><a href="#/lists">Lists</a></li>
+					    <li data-ng-show="showTab('admin')" data-ng-class="{active: isActive('admin')}"><a href="#/admin">Admin</a></li>
+				    </ul>
+				    <ul class="nav pull-right">
+					    <li><a href="#" data-ng-bind="user.username || '?'">?</a></li>
+					    <li class="divider-vertical"></li>
+					    <li><a href="/accounts/logout">Logout</a></li>
+				    </ul>
+			    </div>
+		    </div>
+		    <!-- Begin page content -->
+		    <div>
+  		        <alert data-ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg }}</alert>
+            </div>
+		    <div data-ng-view></div>
+		    <div id="push"></div>
+
+	    </div>
+	    <div id="footer">
+		    <div class="container-fluid">
+		        <div class="row-fluid">
+			        <span class="muted credit pull-left">Motorola Software Updates Portal,
+				        courtesy <strong>Motorola Cloud Services Team</strong>. <br> <p style="display:inline"> Build version : {{version}}</p> &copy;
+				        2013
+			        </span>
+                    <img class="pull-center" src="static/ui/app/img/MOTO_CorporateLogo_Horizontal_RGB.png"
+	                     alt="Motorola Logo">
+			        <ul class="inline pull-right">
+				        <li><a href="/about">About</a></li>
+				        <li><a href="/privacy">Privacy</a></li>
+				        <li><a href="/faq">FAQ</a></li>
+				        <li><a href="mailto:suteam@motorola.com">Contact</a></li>
+			        </ul>
+			    </div>
+		    </div>
+	    </div>
+	    
+		<div modal="shouldBeOpen" close="closeModal()" options="options">
+        	<div class="modal-header">
+            	<h4>New Code Deployment : Please click OK to reload the page</h4>
+        	</div>
+        	<div class="modal-body">
+          		<pre>{{reloadString}}</pre>
+        	</div>
+        	<div class="modal-footer">
+        	 	<button class="btn btn-primary" ng-click="ok()">OK</button>
+            	<button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+        	</div>
+		</div>
+	    
+	    <!-- 		Placed all JS at the end of the script so the page loads faster -->
+        <script src="//code.jquery.com/jquery-latest.min.js"></script>
+        <script src="//code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+	    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+        <script src="static/ui/app/lib/angular/moto-angular-ui.js"></script>
+        <!-- <script src="static/ui/app/lib/angular/angular-ui.min.js"></script> -->
+	    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-resource.min.js"></script>
+	    <!-- <script -->
+	    <!-- 	src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+	    <!--script -->
+	    
+	    <!-- Twitter Bootstrap -->
+	    <script src="static/ui/app/lib/bootstrap/js/bootstrap.js"></script>
+	    
+	    <script type="text/javascript" src="http://angular-ui.github.com/ng-grid/lib/ng-grid.debug.js"></script>
+	    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.3.0.js"></script>
+	    <script type="text/javascript" src="static/ui/app/lib/angular/angular-ui-utils.js"></script>
+        <script type="text/javascript" src="static/ui/app/lib/date.js"></script>
+        <script type="text/javascript" src="static/ui/app/lib/moment-with-langs.min.js"></script>
+	    <script type="text/javascript" src="static/ui/app/lib/ng-google-chart.js"></script>
+        <!-- Motorola Portal JavaScripts -->
+	    <script type="text/javascript" src="static/ui/app/js/app.js"></script>
+	    <script type="text/javascript" src="static/ui/app/js/modules.js"></script>
+	    <script type="text/javascript" src="static/ui/app/js/controllers.js"></script>
+	    <script type="text/javascript" src="static/ui/app/js/directives.js"></script>
+	    <script type="text/javascript" src="static/ui/app/js/services.js"></script>
+	    
+    </body>
+</html>
+

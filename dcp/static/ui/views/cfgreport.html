@@ -1,0 +1,66 @@
+
+<div>
+
+  <h1>Config Versions Report</h1>
+
+  <div class="cfgreport" ng-show="results">
+
+    <table class="list">
+      <thead>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="3">Latest Commited</td>
+          <td colspan="3"><input class="checkbox_align" name="showApprDiffs" ng-model="showApprDiffs" ng-change="updateFilter()" type="checkbox" title="Show rows where the approved version is different from the committed version."/> Latest Approved</td>
+          <td colspan="3"><input class="checkbox_align" name="showPubDiffs" ng-model="showPubDiffs" ng-change="updateFilter()" type="checkbox" title="Show rows where the published version is different from the approved version."/> Latest Published</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Config Set</td>
+          <td>Version</td>
+          <td>Committer</td>
+          <td>Date</td>
+          <td>Version</td>
+          <td>Approver</td>
+          <td>Date</td>
+          <td>Version</td>
+          <td>Publisher</td>
+          <td>Date</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="result in filteredResults">
+          <td class="cell_link">
+            <div><a target="_blank" href="#/{{getCfgTable(result)}}/view/{{result.id}}" onclick="setTmpItem({{result}})">&gt;</a>&nbsp;</div>
+          </td>
+          <td>{{tableDefs.config_set.itemName(result)}}</td>
+          <td>{{result.committed.ver}}</td>
+          <td>{{result.committed.user}}</td>
+          <td>{{result.committed.date}}</td>
+          <td ng-class="{diff:approvedDiff(result)}">{{result.approved.ver}}</td>
+          <td>{{result.approved.user}}</td>
+          <td>{{result.approved.date}}</td>
+          <td ng-class="{diff:publishedDiff(result)}">{{result.published.ver}}</td>
+          <td>{{result.published.user}}</td>
+          <td>{{result.published.date}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-show="result.updates.length==0" class="no_entries">no updates performed</div>
+
+    <div class="actions">
+      <span>
+        <a class="cancel" href="#/" onclick="this.blur()">Close</a>
+      </span>
+    </div>
+  </div>
+
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+
+</div>
+

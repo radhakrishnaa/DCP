@@ -1,0 +1,7 @@
+Django==1.5.1
+MySQL_python==1.2.5
+South==0.7.6
+distribute>=0.6.49
+django_filter==0.6
+django_reversion==1.7
+djangorestframework==2.2.6

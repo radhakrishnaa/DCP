@@ -1,0 +1,41 @@
+
+<div class="error_page" ng-show="error">
+  <h1>Error: <span class="detail">{{errorTitle}}</span>
+    <span class="head_links" ng-switch on="error">
+      <a href="#/{{table}}/list" ng-switch-when="id">&lt; Go to List</a><a href="#/" ng-switch-default>&lt; Home</a>
+    </span>
+  </h1>
+  <div class="desc">{{errorDetail}}</div>
+</div>
+
+<div ng-show="!error" ng-class="{submitted:submitted}">
+
+  <h1>Config Import: <span class="detail"></h1>
+
+  <form ng-show="state!='loading'" ng-submit="importCfg()">
+
+    <div class="actions">
+      <span>
+        <input name="apply" type="submit" value="Import" onclick="this.blur()"/>
+        <a class="cancel" href="#/" onclick="this.blur(); setTmpItem({{item}})">Close</a>
+      </span>
+    </div>
+
+    <div class="bottomnote">NOTE: Imports from /opt/gdicfg/config.zip on the server, not from an uploaded file.</div>
+
+  </form>
+
+  <!-- Display a wait animation while loading. The src is toggled
+       between two identical gifs so that the animation will reset. -->
+  <div class="wait_anim" ng-class="{invis:!waiting()}">
+    <img src="static/ui/{{choose( animToggle, 'images/wait_anim_dup.gif', 'images/wait_anim.gif' )}}">
+  </div>
+
+  <div class="result">
+    {{resultdata}}
+  </div>
+
+  <div ng-include src="'static/ui/views/status_area.html'"></div>
+
+</div>
+

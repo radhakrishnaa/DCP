@@ -1,0 +1,5 @@
+recursive-include dcp/static *.html *.js *.gif *.png *.css
+recursive-include dcp/config *.conf
+recursive-include dcp/templates *.html
+include dcp/VERSION.txt
+include manage.py

@@ -1,0 +1,15 @@
+<div class="modal-header">
+  <h3>{{dialogOptions.headerText}}</h3>
+  <p id="lastModifiedTimestamp" class="muted"><i>Last checked: {{dialogOptions.time |
+          date:"EEEE, MMMM d, yyyy 'at' h:mm:ss a Z"}}</i></p>
+
+</div>
+<div class="modal-body">
+  <pre>{{dialogOptions.bodyText}}</pre>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn" data-ng-show="{{dialogOptions.showCloseButton}}" 
+    data-ng-click="dialogOptions.close()">{{dialogOptions.closeButtonText}}</button>
+  <button class="btn btn-primary" data-ng-show="{{dialogOptions.showCallbackButton}}" 
+    data-ng-click="dialogOptions.callback();">{{dialogOptions.actionButtonText}}</button>
+</div>
